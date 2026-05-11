@@ -10,6 +10,16 @@
 DATA gt_vbak_hash TYPE HASHED TABLE OF ty_vbak
                   WITH UNIQUE KEY vbeln.
 ```
+```abap
+
+DATA gt_vbak_hash TYPE STANDARD TABLE OF ty_vbak
+                  WITH EMPTY KEY vbeln
+                  WITH UNIQUE HASHED KEY key_vbeln COMPONENTS vbeln.
+```
+给这个 STANDARD TABLE 追加一个 HASHED KEY
+这个 key 的名字叫 key_vbeln
+这个 key 用 vbeln 字段组成
+
 读取时:
 
 ```abap
