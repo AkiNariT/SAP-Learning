@@ -1,3 +1,15 @@
-```abap
-WRITE: / 'Hello SAP'.
+## SD 受注明细查询 SQL 示例
+
+```sql
+SELECT
+  a.vbeln,
+  a.auart,
+  a.kunnr,
+  b.posnr,
+  b.matnr,
+  b.kwmeng
+FROM vbak AS a
+INNER JOIN vbap AS b
+  ON a.vbeln = b.vbeln
+WHERE a.auart = 'OR';
 ```
