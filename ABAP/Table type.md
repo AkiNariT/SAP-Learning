@@ -15,7 +15,7 @@ DATA gt_vbak_hash TYPE HASHED TABLE OF ty_vbak
 ```abap
 
 READ TABLE gt_vbak_hash INTO DATA(ls_vbak)
-  WITH TABLE KEY vbeln = lv_vbeln.
+                        WITH TABLE KEY vbeln = lv_vbeln.
 
 IF sy-subrc = 0.
   "找到了受注
