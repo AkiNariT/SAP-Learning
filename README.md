@@ -46,3 +46,6 @@
 <p>MV45AFZZ</p>
 <p>⭐USEREXIT_SAVE_DOCUMENT_PREPARE</p>
 <p>USEREXIT_SAVE_DOCUMENT</p>
+<p>===========================</p>
+<p>項目制御</p>
+<p>VA01 创建时可以输入，VA02 修改时不能改,特定受注类型下字段必输。</p>
