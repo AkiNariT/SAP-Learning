@@ -4,13 +4,22 @@
 <summary>Hash table</summary>
 
 ### ABAP 示例
+定义时：
+```abap
+
+DATA gt_vbak_hash TYPE HASHED TABLE OF ty_vbak
+                  WITH UNIQUE KEY vbeln.
+```
+读取时:
 
 ```abap
 
-REPORT zsd_get_sales_order_demo.
+READ TABLE gt_vbak_hash INTO DATA(ls_vbak)
+  WITH TABLE KEY vbeln = lv_vbeln.
 
-DATA gt_vbak_hash TYPE HASHED TABLE OF ty_vbak
-  WITH UNIQUE KEY vbeln.
+IF sy-subrc = 0.
+  "找到了受注
+ENDIF.
 ```
 
 </details>
