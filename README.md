@@ -42,7 +42,7 @@
 
 <h2>ABAP的相关方向</h2>  
 <p>VA01/VA02扩张：保存時チェック</p>
-<p>常见入口</p>
+<p>常见入口:</p>
 <p>MV45AFZZ</p>
-<p>USEREXIT_SAVE_DOCUMENT_PREPARE</p>
+<p>⭐USEREXIT_SAVE_DOCUMENT_PREPARE</p>
 <p>USEREXIT_SAVE_DOCUMENT</p>
