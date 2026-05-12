@@ -1,426 +1,170 @@
-//还需要理解，暂不作为参考对象
+REPORT zsd_demo_edit_alv.
 
-REPORT zdemo_oo_alv_sd_so.
-
-TYPE-POOLS: lvc.
-
-TABLES: vbak, vbap.
-
-*---------------------------------------------------------------------*
-* 教学案例：OO ALV 显示 SD 受注数据
+*-----------------------------------------------------------------------
+* 教学目的：
+*   1. 上方 ALV 显示受注传票列表 VBAK
+*   2. 双击某个受注后，下方 ALV 显示受注明细 VBAP
+*   3. 明细 ALV 可以合计数量、金额
+*   4. 明细数量 KWMENG 可以修改
+*   5. 点击保存按钮后，模拟保存修改结果
 *
-* 主要目的：
-* 1. 理解 OO ALV 的基本结构
-* 2. 理解 Field Catalog 是如何控制 ALV 列显示的
-* 3. 理解 Layout 是如何控制 ALV 整体外观的
-* 4. 理解 ALV 事件，例如双击、热点点击
-*
-* 使用对象：
-* - CL_GUI_ALV_GRID
-* - CL_GUI_CONTAINER=>DEFAULT_SCREEN
-*
-* 数据来源：
-* - VBAK：销售凭证抬头 / 受注ヘッダ
-* - VBAP：销售凭证明细 / 受注明細
-*---------------------------------------------------------------------*
+* 重要：
+*   本 Demo 不直接 UPDATE 标准表 VBAP。
+*   正式项目里如果要修改受注数量，应使用 BAPI_SALESORDER_CHANGE。
+*-----------------------------------------------------------------------
 
-*---------------------------------------------------------------------*
-* ALV 输出结构
-*---------------------------------------------------------------------*
-TYPES: BEGIN OF ty_alv,
-         vbeln       TYPE vbak-vbeln,     "受注番号
-         posnr       TYPE vbap-posnr,     "明細番号
-         auart       TYPE vbak-auart,     "受注タイプ
-         vkorg       TYPE vbak-vkorg,     "販売組織
-         vtweg       TYPE vbak-vtweg,     "流通チャネル
-         spart       TYPE vbak-spart,     "製品部門
-         kunnr       TYPE vbak-kunnr,     "得意先
-         erdat       TYPE vbak-erdat,     "登録日
-         matnr       TYPE vbap-matnr,     "品目
-         arktx       TYPE vbap-arktx,     "品目テキスト
-         kwmeng      TYPE vbap-kwmeng,    "受注数量
-         vrkme       TYPE vbap-vrkme,     "販売単位
-         netwr       TYPE vbap-netwr,     "正味金額
-         waerk       TYPE vbak-waerk,     "通貨
-         status_text TYPE char20,         "教学用状态文本
-       END OF ty_alv.
+TABLES: vbak.
 
-*---------------------------------------------------------------------*
+*-----------------------------------------------------------------------
 * 选择画面
-*---------------------------------------------------------------------*
-SELECTION-SCREEN BEGIN OF BLOCK b1 WITH FRAME.
-
+*-----------------------------------------------------------------------
 SELECT-OPTIONS:
-  s_vbeln FOR vbak-vbeln,    "受注番号
-  s_erdat FOR vbak-erdat,    "登録日
-  s_matnr FOR vbap-matnr.    "品目
+  s_vbeln FOR vbak-vbeln.
 
 PARAMETERS:
-  p_max TYPE i DEFAULT 200.  "最大取得件数
+  p_max TYPE i DEFAULT 50.
 
-SELECTION-SCREEN END OF BLOCK b1.
+*-----------------------------------------------------------------------
+* 类型定义：受注ヘッダ
+*-----------------------------------------------------------------------
+TYPES: BEGIN OF ty_head,
+         vbeln TYPE vbak-vbeln,   "受注番号
+         auart TYPE vbak-auart,   "販売伝票タイプ
+         kunnr TYPE vbak-kunnr,   "得意先
+         erdat TYPE vbak-erdat,   "登録日
+         waerk TYPE vbak-waerk,   "通貨
+       END OF ty_head.
 
-*---------------------------------------------------------------------*
-* 选择画面检查
-*---------------------------------------------------------------------*
-AT SELECTION-SCREEN.
-  IF p_max <= 0.
-    MESSAGE '最大取得件数必须大于 0' TYPE 'E'.
-  ENDIF.
+*-----------------------------------------------------------------------
+* 类型定义：受注明細
+*-----------------------------------------------------------------------
+TYPES: BEGIN OF ty_item,
+         vbeln      TYPE vbap-vbeln,   "受注番号
+         posnr      TYPE vbap-posnr,   "明細番号
+         matnr      TYPE vbap-matnr,   "品目
+         arktx      TYPE vbap-arktx,   "品目テキスト
+         kwmeng     TYPE vbap-kwmeng,  "受注数量：可编辑
+         orig_kwmeng TYPE vbap-kwmeng, "原始数量：用于判断是否修改
+         vrkme      TYPE vbap-vrkme,   "販売単位
+         netwr      TYPE vbap-netwr,   "金額：演示中根据数量重新计算
+         waerk      TYPE vbak-waerk,   "通貨
+         unit_price TYPE p LENGTH 15 DECIMALS 4, "单价：教学用
+         changed    TYPE c LENGTH 1,   "是否修改
+         status     TYPE c LENGTH 20,  "保存状态
+       END OF ty_item.
 
-*---------------------------------------------------------------------*
-* 主处理类定义
-*---------------------------------------------------------------------*
-CLASS lcl_app DEFINITION.
+*-----------------------------------------------------------------------
+* 全局数据
+*-----------------------------------------------------------------------
+DATA:
+  gt_head TYPE STANDARD TABLE OF ty_head WITH EMPTY KEY,
+  gt_item TYPE STANDARD TABLE OF ty_item WITH EMPTY KEY.
 
+DATA:
+  gv_current_vbeln TYPE vbak-vbeln,
+  gv_current_waerk TYPE vbak-waerk.
+
+*-----------------------------------------------------------------------
+* ALV 相关对象
+*-----------------------------------------------------------------------
+DATA:
+  go_dock       TYPE REF TO cl_gui_docking_container,
+  go_splitter   TYPE REF TO cl_gui_splitter_container,
+  go_cont_head  TYPE REF TO cl_gui_container,
+  go_cont_item  TYPE REF TO cl_gui_container,
+  go_grid_head  TYPE REF TO cl_gui_alv_grid,
+  go_grid_item  TYPE REF TO cl_gui_alv_grid,
+  go_handler    TYPE REF TO lcl_event_handler.
+
+DATA:
+  gt_fcat_head TYPE lvc_t_fcat,
+  gt_fcat_item TYPE lvc_t_fcat,
+  gs_layout    TYPE lvc_s_layo.
+
+*-----------------------------------------------------------------------
+* 事件处理类
+*-----------------------------------------------------------------------
+CLASS lcl_event_handler DEFINITION.
   PUBLIC SECTION.
 
     METHODS:
-      run.
-
-  PRIVATE SECTION.
-
-    DATA:
-      mt_alv      TYPE STANDARD TABLE OF ty_alv,  "ALV显示用内表
-      ms_alv      TYPE ty_alv,                    "ALV工作区
-      mt_fieldcat TYPE lvc_t_fcat,                "字段目录
-      ms_layout   TYPE lvc_s_layo,                "ALV布局
-      mo_grid     TYPE REF TO cl_gui_alv_grid.    "ALV对象
-
-    METHODS:
-      get_data,
-      build_fieldcat,
-      build_layout,
-      display_alv,
-
-      add_fieldcat
-        IMPORTING
-          iv_fieldname TYPE lvc_fname
-          iv_coltext   TYPE lvc_txtcol
-          iv_outputlen TYPE i DEFAULT 10
-          iv_key       TYPE c DEFAULT space
-          iv_hotspot   TYPE c DEFAULT space
-          iv_do_sum    TYPE c DEFAULT space
-          iv_no_zero   TYPE c DEFAULT space,
-
       handle_double_click
         FOR EVENT double_click OF cl_gui_alv_grid
-        IMPORTING
-          e_row
-          e_column,
+        IMPORTING e_row e_column sender,
 
-      handle_hotspot_click
-        FOR EVENT hotspot_click OF cl_gui_alv_grid
-        IMPORTING
-          e_row_id
-          e_column_id.
+      handle_toolbar
+        FOR EVENT toolbar OF cl_gui_alv_grid
+        IMPORTING e_object e_interactive sender,
+
+      handle_user_command
+        FOR EVENT user_command OF cl_gui_alv_grid
+        IMPORTING e_ucomm sender.
 
 ENDCLASS.
-*---------------------------------------------------------------------*
-* 主处理类实现
-*---------------------------------------------------------------------*
-CLASS lcl_app IMPLEMENTATION.
 
-  METHOD run.
-
-    "1. 取得数据
-    me->get_data( ).
-
-    IF mt_alv IS INITIAL.
-      MESSAGE '没有取到数据，请放宽选择条件。' TYPE 'I'.
-      RETURN.
-    ENDIF.
-
-    "2. 构建 Field Catalog
-    me->build_fieldcat( ).
-
-    "3. 构建 Layout
-    me->build_layout( ).
-
-    "4. 显示 ALV
-    me->display_alv( ).
-
-  ENDMETHOD.
-
-  METHOD get_data.
-
-    FIELD-SYMBOLS:
-      <ls_alv> TYPE ty_alv.
-
-    CLEAR mt_alv.
-
-    SELECT a~vbeln
-           b~posnr
-           a~auart
-           a~vkorg
-           a~vtweg
-           a~spart
-           a~kunnr
-           a~erdat
-           b~matnr
-           b~arktx
-           b~kwmeng
-           b~vrkme
-           b~netwr
-           a~waerk
-      FROM vbak AS a
-      INNER JOIN vbap AS b
-        ON b~vbeln = a~vbeln
-      INTO CORRESPONDING FIELDS OF TABLE mt_alv
-      UP TO p_max ROWS
-      WHERE a~vbeln IN s_vbeln
-        AND a~erdat IN s_erdat
-        AND b~matnr IN s_matnr
-      ORDER BY a~vbeln b~posnr.
-
-    "教学用：给每一行追加一个简单状态文本
-    LOOP AT mt_alv ASSIGNING <ls_alv>.
-
-      IF <ls_alv>-kwmeng IS INITIAL.
-        <ls_alv>-status_text = '数量为空'.
-      ELSEIF <ls_alv>-netwr IS INITIAL.
-        <ls_alv>-status_text = '金额为空'.
-      ELSE.
-        <ls_alv>-status_text = '正常'.
-      ENDIF.
-
-    ENDLOOP.
-
-  ENDMETHOD.
-
-  METHOD build_fieldcat.
-
-    FIELD-SYMBOLS:
-      <ls_fcat> TYPE lvc_s_fcat.
-
-    CLEAR mt_fieldcat.
-
-    "KEY字段：通常用于固定重要列
-    me->add_fieldcat(
-      iv_fieldname = 'VBELN'
-      iv_coltext   = '受注番号'
-      iv_outputlen = 12
-      iv_key       = 'X'
-      iv_hotspot   = 'X' ).
-
-    me->add_fieldcat(
-      iv_fieldname = 'POSNR'
-      iv_coltext   = '明細番号'
-      iv_outputlen = 8
-      iv_key       = 'X'
-      iv_no_zero   = 'X' ).
-
-    me->add_fieldcat(
-      iv_fieldname = 'AUART'
-      iv_coltext   = '受注タイプ'
-      iv_outputlen = 10 ).
-
-    me->add_fieldcat(
-      iv_fieldname = 'VKORG'
-      iv_coltext   = '販売組織'
-      iv_outputlen = 10 ).
-
-    me->add_fieldcat(
-      iv_fieldname = 'VTWEG'
-      iv_coltext   = '流通チャネル'
-      iv_outputlen = 12 ).
-
-    me->add_fieldcat(
-      iv_fieldname = 'SPART'
-      iv_coltext   = '製品部門'
-      iv_outputlen = 10 ).
-
-    me->add_fieldcat(
-      iv_fieldname = 'KUNNR'
-      iv_coltext   = '得意先'
-      iv_outputlen = 12 ).
-
-    me->add_fieldcat(
-      iv_fieldname = 'ERDAT'
-      iv_coltext   = '登録日'
-      iv_outputlen = 10 ).
-
-    me->add_fieldcat(
-      iv_fieldname = 'MATNR'
-      iv_coltext   = '品目'
-      iv_outputlen = 18 ).
-
-    me->add_fieldcat(
-      iv_fieldname = 'ARKTX'
-      iv_coltext   = '品目テキスト'
-      iv_outputlen = 30 ).
-
-    me->add_fieldcat(
-      iv_fieldname = 'KWMENG'
-      iv_coltext   = '受注数量'
-      iv_outputlen = 15
-      iv_do_sum    = 'X' ).
-
-    me->add_fieldcat(
-      iv_fieldname = 'VRKME'
-      iv_coltext   = '販売単位'
-      iv_outputlen = 8 ).
-
-    me->add_fieldcat(
-      iv_fieldname = 'NETWR'
-      iv_coltext   = '正味金額'
-      iv_outputlen = 15
-      iv_do_sum    = 'X' ).
-
-    me->add_fieldcat(
-      iv_fieldname = 'WAERK'
-      iv_coltext   = '通貨'
-      iv_outputlen = 6 ).
-
-    me->add_fieldcat(
-      iv_fieldname = 'STATUS_TEXT'
-      iv_coltext   = '状态'
-      iv_outputlen = 12 ).
-
-    "数量字段和单位字段关联
-    READ TABLE mt_fieldcat ASSIGNING <ls_fcat>
-      WITH KEY fieldname = 'KWMENG'.
-
-    IF sy-subrc = 0.
-      <ls_fcat>-qfieldname = 'VRKME'.
-    ENDIF.
-
-    "金额字段和通货字段关联
-    READ TABLE mt_fieldcat ASSIGNING <ls_fcat>
-      WITH KEY fieldname = 'NETWR'.
-
-    IF sy-subrc = 0.
-      <ls_fcat>-cfieldname = 'WAERK'.
-    ENDIF.
-
-  ENDMETHOD.
-
-  METHOD add_fieldcat.
-
-    DATA:
-      ls_fcat TYPE lvc_s_fcat.
-
-    CLEAR ls_fcat.
-
-    "ALV内表中的字段名
-    ls_fcat-fieldname = iv_fieldname.
-
-    "列标题
-    ls_fcat-coltext   = iv_coltext.
-    ls_fcat-scrtext_l = iv_coltext.
-    ls_fcat-scrtext_m = iv_coltext.
-    ls_fcat-scrtext_s = iv_coltext.
-
-    "列宽
-    ls_fcat-outputlen = iv_outputlen.
-
-    "是否KEY列
-    ls_fcat-key = iv_key.
-
-    "是否热点字段：点击后触发 HOTSPOT_CLICK 事件
-    ls_fcat-hotspot = iv_hotspot.
-
-    "是否合计
-    ls_fcat-do_sum = iv_do_sum.
-
-    "是否隐藏前导零
-    ls_fcat-no_zero = iv_no_zero.
-
-    APPEND ls_fcat TO mt_fieldcat.
-
-  ENDMETHOD.
-
-  METHOD build_layout.
-
-    CLEAR ms_layout.
-
-    "斑马纹显示
-    ms_layout-zebra = 'X'.
-
-    "自动优化列宽
-    ms_layout-cwidth_opt = 'X'.
-
-    "允许多选
-    ms_layout-sel_mode = 'A'.
-
-    "ALV标题
-    ms_layout-grid_title = 'SD 受注データ OO ALV 教学案例'.
-
-  ENDMETHOD.
-
-  METHOD display_alv.
-
-    "这里使用 DEFAULT_SCREEN，所以不需要自己创建 0100 画面
-    CREATE OBJECT mo_grid
-      EXPORTING
-        i_parent = cl_gui_container=>default_screen.
-
-    "注册事件：双击
-    SET HANDLER me->handle_double_click FOR mo_grid.
-
-    "注册事件：热点点击
-    SET HANDLER me->handle_hotspot_click FOR mo_grid.
-
-    "第一次显示 ALV
-    CALL METHOD mo_grid->set_table_for_first_display
-      EXPORTING
-        is_layout       = ms_layout
-        i_save          = 'A'      "允许保存用户布局
-        i_default       = 'X'
-      CHANGING
-        it_outtab       = mt_alv
-        it_fieldcatalog = mt_fieldcat.
-
-    "刷新前端控制
-    CALL METHOD cl_gui_cfw=>flush.
-
-    "使用 DEFAULT_SCREEN 时，需要一个 WRITE 触发标准 List Screen
-    WRITE space.
-
-  ENDMETHOD.
+CLASS lcl_event_handler IMPLEMENTATION.
 
   METHOD handle_double_click.
 
-    DATA:
-      ls_alv TYPE ty_alv.
+    "只处理上方受注列表的双击事件
+    IF sender <> go_grid_head.
+      RETURN.
+    ENDIF.
 
-    READ TABLE mt_alv INTO ls_alv INDEX e_row-index.
-
+    READ TABLE gt_head INTO DATA(ls_head) INDEX e_row-index.
     IF sy-subrc <> 0.
       RETURN.
     ENDIF.
 
-    MESSAGE i398(00)
-      WITH '双击行：受注'
-           ls_alv-vbeln
-           '品目'
-           ls_alv-matnr.
+    gv_current_vbeln = ls_head-vbeln.
+    gv_current_waerk = ls_head-waerk.
+
+    PERFORM get_item_data USING gv_current_vbeln gv_current_waerk.
+    PERFORM refresh_item_alv.
+
+    MESSAGE |受注 { gv_current_vbeln } の明細を表示しました。| TYPE 'S'.
 
   ENDMETHOD.
 
-  METHOD handle_hotspot_click.
+  METHOD handle_toolbar.
 
-    DATA:
-      ls_alv TYPE ty_alv.
+    DATA ls_button TYPE stb_button.
 
-    READ TABLE mt_alv INTO ls_alv INDEX e_row_id-index.
+    CLEAR ls_button.
 
-    IF sy-subrc <> 0.
-      RETURN.
+    IF sender = go_grid_head.
+
+      "上方 ALV：追加退出按钮
+      ls_button-function  = 'EXIT'.
+      ls_button-icon      = icon_system_end.
+      ls_button-quickinfo = '退出程序'.
+      ls_button-text      = '退出'.
+      APPEND ls_button TO e_object->mt_toolbar.
+
+    ELSEIF sender = go_grid_item.
+
+      "下方 ALV：追加保存按钮
+      ls_button-function  = 'SAVE'.
+      ls_button-icon      = icon_system_save.
+      ls_button-quickinfo = '保存修改'.
+      ls_button-text      = '保存修改'.
+      APPEND ls_button TO e_object->mt_toolbar.
+
     ENDIF.
 
-    CASE e_column_id-fieldname.
+  ENDMETHOD.
 
-      WHEN 'VBELN'.
+  METHOD handle_user_command.
 
-        "点击受注番号时，跳转到 VA03
-        SET PARAMETER ID 'AUN' FIELD ls_alv-vbeln.
+    CASE e_ucomm.
 
-        CALL TRANSACTION 'VA03' AND SKIP FIRST SCREEN.
+      WHEN 'EXIT'.
+        LEAVE PROGRAM.
 
-      WHEN OTHERS.
-
-        MESSAGE '当前字段没有定义 Hotspot 处理。' TYPE 'I'.
+      WHEN 'SAVE'.
+        IF sender = go_grid_item.
+          PERFORM save_item_data.
+        ENDIF.
 
     ENDCASE.
 
@@ -428,16 +172,394 @@ CLASS lcl_app IMPLEMENTATION.
 
 ENDCLASS.
 
-*---------------------------------------------------------------------*
-* 全局对象
-*---------------------------------------------------------------------*
-DATA:
-  go_app TYPE REF TO lcl_app.
-
-*---------------------------------------------------------------------*
-* 程序入口
-*---------------------------------------------------------------------*
+*-----------------------------------------------------------------------
+* 主处理
+*-----------------------------------------------------------------------
 START-OF-SELECTION.
 
-  CREATE OBJECT go_app.
-  go_app->run( ).
+  PERFORM get_head_data.
+
+  IF gt_head IS INITIAL.
+    MESSAGE '該当する受注データがありません。' TYPE 'S' DISPLAY LIKE 'E'.
+    RETURN.
+  ENDIF.
+
+  CALL SCREEN 0100.
+
+*-----------------------------------------------------------------------
+* 取得受注ヘッダ数据
+*-----------------------------------------------------------------------
+FORM get_head_data.
+
+  SELECT vbeln,
+         auart,
+         kunnr,
+         erdat,
+         waerk
+    FROM vbak
+    INTO TABLE @gt_head
+    WHERE vbeln IN @s_vbeln
+    UP TO @p_max ROWS.
+
+ENDFORM.
+
+*-----------------------------------------------------------------------
+* 取得受注明細数据
+*-----------------------------------------------------------------------
+FORM get_item_data USING pv_vbeln TYPE vbak-vbeln
+                         pv_waerk TYPE vbak-waerk.
+
+  CLEAR gt_item.
+
+  SELECT vbeln,
+         posnr,
+         matnr,
+         arktx,
+         kwmeng,
+         vrkme,
+         netwr
+    FROM vbap
+    INTO TABLE @DATA(lt_vbap)
+    WHERE vbeln = @pv_vbeln.
+
+  LOOP AT lt_vbap INTO DATA(ls_vbap).
+
+    DATA(lv_unit_price) = COND p(
+      WHEN ls_vbap-kwmeng IS NOT INITIAL
+      THEN ls_vbap-netwr / ls_vbap-kwmeng
+      ELSE 0
+    ).
+
+    APPEND VALUE ty_item(
+      vbeln       = ls_vbap-vbeln
+      posnr       = ls_vbap-posnr
+      matnr       = ls_vbap-matnr
+      arktx       = ls_vbap-arktx
+      kwmeng      = ls_vbap-kwmeng
+      orig_kwmeng = ls_vbap-kwmeng
+      vrkme       = ls_vbap-vrkme
+      netwr       = ls_vbap-netwr
+      waerk       = pv_waerk
+      unit_price  = lv_unit_price
+      changed     = space
+      status      = space
+    ) TO gt_item.
+
+  ENDLOOP.
+
+ENDFORM.
+
+*-----------------------------------------------------------------------
+* PBO
+*-----------------------------------------------------------------------
+MODULE pbo_0100 OUTPUT.
+
+  IF go_dock IS INITIAL.
+    PERFORM create_alv_screen.
+  ENDIF.
+
+ENDMODULE.
+
+*-----------------------------------------------------------------------
+* PAI
+*-----------------------------------------------------------------------
+MODULE pai_0100 INPUT.
+
+  CASE sy-ucomm.
+    WHEN 'BACK' OR 'EXIT' OR 'CANCEL'.
+      LEAVE PROGRAM.
+  ENDCASE.
+
+ENDMODULE.
+
+*-----------------------------------------------------------------------
+* 创建 ALV 画面
+*-----------------------------------------------------------------------
+FORM create_alv_screen.
+
+  "创建 Docking Container，占满当前屏幕
+  CREATE OBJECT go_dock
+    EXPORTING
+      repid     = sy-repid
+      dynnr     = sy-dynnr
+      side      = cl_gui_docking_container=>dock_at_left
+      extension = 9999.
+
+  "创建上下分割容器
+  CREATE OBJECT go_splitter
+    EXPORTING
+      parent  = go_dock
+      rows    = 2
+      columns = 1.
+
+  go_cont_head = go_splitter->get_container(
+    row    = 1
+    column = 1
+  ).
+
+  go_cont_item = go_splitter->get_container(
+    row    = 2
+    column = 1
+  ).
+
+  "设置上下高度比例
+  go_splitter->set_row_height(
+    id     = 1
+    height = 40
+  ).
+
+  go_splitter->set_row_height(
+    id     = 2
+    height = 60
+  ).
+
+  "创建两个 ALV Grid
+  CREATE OBJECT go_grid_head
+    EXPORTING
+      i_parent = go_cont_head.
+
+  CREATE OBJECT go_grid_item
+    EXPORTING
+      i_parent = go_cont_item.
+
+  "创建事件处理对象
+  CREATE OBJECT go_handler.
+
+  SET HANDLER go_handler->handle_double_click FOR go_grid_head.
+  SET HANDLER go_handler->handle_toolbar      FOR go_grid_head.
+  SET HANDLER go_handler->handle_user_command FOR go_grid_head.
+
+  SET HANDLER go_handler->handle_toolbar      FOR go_grid_item.
+  SET HANDLER go_handler->handle_user_command FOR go_grid_item.
+
+  "构建 Field Catalog
+  PERFORM build_fcat_head.
+  PERFORM build_fcat_item.
+
+  "显示两个 ALV
+  PERFORM display_head_alv.
+  PERFORM display_item_alv.
+
+ENDFORM.
+
+*-----------------------------------------------------------------------
+* 构建上方受注 ALV Field Catalog
+*-----------------------------------------------------------------------
+FORM build_fcat_head.
+
+  CLEAR gt_fcat_head.
+
+  PERFORM add_fcat_head USING 'VBELN' '受注番号'        '' ''.
+  PERFORM add_fcat_head USING 'AUART' '販売伝票タイプ'  '' ''.
+  PERFORM add_fcat_head USING 'KUNNR' '得意先'          '' ''.
+  PERFORM add_fcat_head USING 'ERDAT' '登録日'          '' ''.
+  PERFORM add_fcat_head USING 'WAERK' '通貨'            '' ''.
+
+ENDFORM.
+
+FORM add_fcat_head USING pv_field TYPE fieldname
+                         pv_text  TYPE scrtext_l
+                         pv_edit  TYPE c
+                         pv_sum   TYPE c.
+
+  DATA ls_fcat TYPE lvc_s_fcat.
+
+  ls_fcat-fieldname = pv_field.
+  ls_fcat-coltext   = pv_text.
+  ls_fcat-scrtext_l = pv_text.
+  ls_fcat-scrtext_m = pv_text.
+  ls_fcat-scrtext_s = pv_text.
+
+  IF pv_edit = abap_true.
+    ls_fcat-edit = abap_true.
+  ENDIF.
+
+  IF pv_sum = abap_true.
+    ls_fcat-do_sum = abap_true.
+  ENDIF.
+
+  APPEND ls_fcat TO gt_fcat_head.
+
+ENDFORM.
+
+*-----------------------------------------------------------------------
+* 构建下方明细 ALV Field Catalog
+*-----------------------------------------------------------------------
+FORM build_fcat_item.
+
+  CLEAR gt_fcat_item.
+
+  PERFORM add_fcat_item USING 'VBELN'       '受注番号'     ''          ''.
+  PERFORM add_fcat_item USING 'POSNR'       '明細'         ''          ''.
+  PERFORM add_fcat_item USING 'MATNR'       '品目'         ''          ''.
+  PERFORM add_fcat_item USING 'ARKTX'       '品目名称'     ''          ''.
+  PERFORM add_fcat_item USING 'KWMENG'      '受注数量'     abap_true   abap_true.
+  PERFORM add_fcat_item USING 'VRKME'       '単位'         ''          ''.
+  PERFORM add_fcat_item USING 'NETWR'       '金額'         ''          abap_true.
+  PERFORM add_fcat_item USING 'WAERK'       '通貨'         ''          ''.
+  PERFORM add_fcat_item USING 'CHANGED'     '変更'         ''          ''.
+  PERFORM add_fcat_item USING 'STATUS'      '保存状態'     ''          ''.
+
+  "教学用单价、原始数量一般不显示
+  PERFORM add_fcat_item USING 'UNIT_PRICE'  '単価'         ''          ''.
+  PERFORM add_fcat_item USING 'ORIG_KWMENG' '元数量'       ''          ''.
+
+  LOOP AT gt_fcat_item ASSIGNING FIELD-SYMBOL(<ls_fcat>).
+    IF <ls_fcat>-fieldname = 'UNIT_PRICE'
+    OR <ls_fcat>-fieldname = 'ORIG_KWMENG'.
+      <ls_fcat>-no_out = abap_true.
+    ENDIF.
+  ENDLOOP.
+
+ENDFORM.
+
+FORM add_fcat_item USING pv_field TYPE fieldname
+                         pv_text  TYPE scrtext_l
+                         pv_edit  TYPE c
+                         pv_sum   TYPE c.
+
+  DATA ls_fcat TYPE lvc_s_fcat.
+
+  ls_fcat-fieldname = pv_field.
+  ls_fcat-coltext   = pv_text.
+  ls_fcat-scrtext_l = pv_text.
+  ls_fcat-scrtext_m = pv_text.
+  ls_fcat-scrtext_s = pv_text.
+
+  IF pv_edit = abap_true.
+    ls_fcat-edit = abap_true.
+  ENDIF.
+
+  IF pv_sum = abap_true.
+    ls_fcat-do_sum = abap_true.
+  ENDIF.
+
+  APPEND ls_fcat TO gt_fcat_item.
+
+ENDFORM.
+
+*-----------------------------------------------------------------------
+* 显示上方受注 ALV
+*-----------------------------------------------------------------------
+FORM display_head_alv.
+
+  CLEAR gs_layout.
+
+  gs_layout-zebra      = abap_true.
+  gs_layout-cwidth_opt = abap_true.
+  gs_layout-sel_mode   = 'A'.
+
+  go_grid_head->set_table_for_first_display(
+    EXPORTING
+      is_layout       = gs_layout
+    CHANGING
+      it_outtab       = gt_head
+      it_fieldcatalog = gt_fcat_head
+  ).
+
+  go_grid_head->set_toolbar_interactive( ).
+
+ENDFORM.
+
+*-----------------------------------------------------------------------
+* 显示下方明细 ALV
+*-----------------------------------------------------------------------
+FORM display_item_alv.
+
+  CLEAR gs_layout.
+
+  gs_layout-zebra      = abap_true.
+  gs_layout-cwidth_opt = abap_true.
+  gs_layout-sel_mode   = 'A'.
+  gs_layout-edit       = abap_true.
+
+  go_grid_item->set_table_for_first_display(
+    EXPORTING
+      is_layout       = gs_layout
+    CHANGING
+      it_outtab       = gt_item
+      it_fieldcatalog = gt_fcat_item
+  ).
+
+  "允许单元格修改后触发变更
+  go_grid_item->register_edit_event(
+    EXPORTING
+      i_event_id = cl_gui_alv_grid=>mc_evt_modified
+  ).
+
+  "设置为可输入状态
+  go_grid_item->set_ready_for_input( 1 ).
+
+  go_grid_item->set_toolbar_interactive( ).
+
+ENDFORM.
+
+*-----------------------------------------------------------------------
+* 刷新明细 ALV
+*-----------------------------------------------------------------------
+FORM refresh_item_alv.
+
+  DATA ls_stable TYPE lvc_s_stbl.
+
+  ls_stable-row = abap_true.
+  ls_stable-col = abap_true.
+
+  go_grid_item->refresh_table_display(
+    EXPORTING
+      is_stable = ls_stable
+  ).
+
+ENDFORM.
+
+*-----------------------------------------------------------------------
+* 保存明细数据
+*-----------------------------------------------------------------------
+FORM save_item_data.
+
+  IF gv_current_vbeln IS INITIAL.
+    MESSAGE '先双击一张受注，再修改明细。' TYPE 'S' DISPLAY LIKE 'E'.
+    RETURN.
+  ENDIF.
+
+  "把前台 ALV 修改同步回内表 gt_item
+  go_grid_item->check_changed_data( ).
+
+  DATA(lv_changed_count) = 0.
+
+  LOOP AT gt_item ASSIGNING FIELD-SYMBOL(<ls_item>).
+
+    "判断数量是否被修改
+    IF <ls_item>-kwmeng <> <ls_item>-orig_kwmeng.
+
+      lv_changed_count = lv_changed_count + 1.
+
+      "教学用：根据单价重新计算金额
+      <ls_item>-netwr = <ls_item>-kwmeng * <ls_item>-unit_price.
+
+      <ls_item>-changed = abap_true.
+      <ls_item>-status  = '保存済み(演示)'.
+
+      "保存后把当前数量作为新的原始数量
+      <ls_item>-orig_kwmeng = <ls_item>-kwmeng.
+
+    ENDIF.
+
+  ENDLOOP.
+
+  IF lv_changed_count = 0.
+    MESSAGE '変更された明細はありません。' TYPE 'S'.
+    RETURN.
+  ENDIF.
+
+  "正式项目注意：
+  "这里不要 UPDATE VBAP。
+  "如果真实修改受注数量，应该调用 BAPI_SALESORDER_CHANGE。
+  "
+  "示意：
+  " PERFORM save_by_bapi_salesorder_change.
+
+  PERFORM refresh_item_alv.
+
+  MESSAGE |{ lv_changed_count } 件の明細を保存しました。※教学模拟保存| TYPE 'S'.
+
+ENDFORM.
