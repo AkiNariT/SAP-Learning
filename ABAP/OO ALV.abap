@@ -1,3 +1,5 @@
+//还需要理解，暂不作为参考对象
+
 REPORT zdemo_oo_alv_sd_so.
 
 TYPE-POOLS: lvc.
