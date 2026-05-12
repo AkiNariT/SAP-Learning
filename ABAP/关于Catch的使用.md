@@ -1,4 +1,11 @@
-<h2>程序Dump了</h2>
+<details>
+<summary><h2>怎么判断该不该用 TRY...CATCH</h2></summary>
+<img width="980" height="507" alt="image" src="https://github.com/user-attachments/assets/0bba260b-e4df-4c15-856a-f91b26c79281" />
+
+</details>
+  
+<details>
+<summary><h2>程序Dump了</h2></summary>
 
 如果程序 dump 了，ST22 里经常能看到异常类，比如
   ```abap  
@@ -37,3 +44,4 @@ IF line_exists( gt_vbak[ vbeln = lv_vbeln ] ).
   DATA(ls_vbak) = gt_vbak[ vbeln = lv_vbeln ].
 ENDIF.
   ```
+</details>
