@@ -1,4 +1,4 @@
-<h2>CORRESPONDING #( )：程序Dump了</h2>
+<h2>程序Dump了</h2>
 
 如果程序 dump 了，ST22 里经常能看到异常类，比如
   ```abap  
