@@ -27,3 +27,18 @@
 </details>
 
 接下来就是CDS View的操作了。
+
+<details>
+  <summary><h4>Eclipes和SAP建立联系</h4></summary>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在新建ABAP程序时，是可以看到环境的。红色掩盖的其实就是环境信息。
+<img width="778" height="817" alt="image" src="https://github.com/user-attachments/assets/c81ca60b-152a-41e8-a64a-1f0e404f4e7e" /><br>
+  <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;下一步就会进到环境相关设定了，账号密码语言。<br>
+  <br>
+  <img width="778" height="832" alt="image" src="https://github.com/user-attachments/assets/fcbf6269-104e-4629-8104-d2b65f918acf" /> <br>
+<img width="267" height="166" alt="image" src="https://github.com/user-attachments/assets/244c0370-f536-41d4-bcb5-47aec867b199" />
+ <br>
+ <br> 
+  这就算成功建立联系了。
+</details>
+
