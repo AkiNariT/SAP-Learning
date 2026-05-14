@@ -18,3 +18,12 @@ define view ZI_SD_SO_BY_DATE
 }
 where erdat between $parameters.p_date_from
                and $parameters.p_date_to
+
+
+   ```abap  
+SELECT *
+  FROM zi_sd_so_by_date(
+         p_date_from = '20260101',
+         p_date_to   = '20261231' )
+  INTO TABLE @DATA(lt_result).
+  ```
