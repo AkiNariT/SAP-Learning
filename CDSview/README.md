@@ -85,9 +85,8 @@
 
 
 ## 🔶CDS View的代码分享<br>
-🟣代表简单难度<br>
-🌟代表高难度<br>
-🔥代表重要<br>
+🟣代表简单难度&nbsp;🌟代表高难度&nbsp;🔥代表重要<br>
+
 
 🟣[单表](<./单表CDS View (old).js>)<br>
 🟣[INNER JOIN](<./INNER JOIN.js>)<br>
