@@ -94,5 +94,5 @@
 🌟[Association 写法](<./Association.js>)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;理解起来有些复杂，短时间不能理解，请立刻使用JOIN。<br>
 🟣[WHERE 条件](<./WHERE条件.js>)<br>
-🟣[带参数的 CDS View](<./带有参数取数据.js>)<br>
+🟣[带参数的 CDS View](<./带有参数取数据.md>)<br>
 🟣[Case写法](<./CASE.js>)<br>
