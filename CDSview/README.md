@@ -69,7 +69,7 @@
 ## 🔶CDS View的代码分享<br>
 🟣[单表](<./单表CDS View (old).js>)<br>
 🟣[INNER JOIN](<./INNER JOIN.js>)<br>
-&nbsp;&nbsp;缺点是 JOIN 写死了，复用性不如 Association。<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;缺点是 JOIN 写死了，复用性不如 Association。<br>
 <br>
 <br>
 🟣[WHERE 条件](<./CDSview/WHERE条件.js>)<br>
