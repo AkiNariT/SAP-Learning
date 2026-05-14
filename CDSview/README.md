@@ -87,6 +87,7 @@
 ## 🔶CDS View的代码分享<br>
 🟣代表简单难度<br>
 🌟代表高难度<br>
+🔥代表重要<br>
 
 🟣[单表](<./单表CDS View (old).js>)<br>
 🟣[INNER JOIN](<./INNER JOIN.js>)<br>
@@ -96,3 +97,4 @@
 🟣[WHERE 条件](<./WHERE条件.js>)<br>
 🟣[带参数的 CDS View](<./带有参数取数据.md>)<br>
 🟣[Case写法](<./CASE.js>)<br>
+🔥
