@@ -72,4 +72,5 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;缺点是 JOIN 写死了，复用性不如 Association。<br>
 <br>
 <br>
-🟣[WHERE 条件](<./CDSview/WHERE条件.js>)<br>
+🟣[WHERE 条件](<./WHERE条件.js>)<br>
+🟣[带参数的 CDS View](<./带有参数取数据.js>)<br>
