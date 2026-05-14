@@ -64,6 +64,25 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这算是完成了第一个CDS View的建立。
 </details>
 
+## 🔶SQL <br>
+<details><summary>简单的SQL说明</summary>
+其实就是SQL文，常用的一定要知道！<br>
+  <br>
+内连接INNER JOIN<br>
+ └─ 两个表的数据都要。<br>
+<br>
+左外连接LEFT OUTER JOIN<br>
+ └─左边主表一定显示，右边有就带出来，没有就空。<br>
+
+<br>
+右外连接RIGHT OUTER JOIN<br>
+ └─右边表一定显示，左边有就带出来。使用频率低。<br>
+
+内连接影响主体，外连接影响附加信息<br>
+
+</details>
+
+
 
 ## 🔶CDS View的代码分享<br>
 🟣代表简单难度<br>
