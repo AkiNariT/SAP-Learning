@@ -5,7 +5,6 @@
 下载的Eclipes是不带有ABAP编码的，此时即便新建程序也没有ABAP选项。<br>
 因此此时要做的是先准备ADT插件。<br>
 
-## 🔶CDS View流程 <br>
 <details>
 <summary>下载ADT插件</summary>
 🔹顶部菜单<br>
@@ -27,6 +26,7 @@
 
 下载完ADT插件后，接下来就是创建第一个CDS View的操作了。
 
+## 🔶CDS View流程 <br>
 <details>
   <summary>Eclipes和SAP建立联系</summary>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在新建ABAP程序时，是可以看到环境的。红色掩盖的其实就是环境信息。<br>
