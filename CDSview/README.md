@@ -67,7 +67,7 @@
 
 
 ## 🔶CDS View的代码分享<br>
-[单表](<./Single table-CDS View (old).js>)
+[单表](<./CDSview/单表CDS View (old).js>)
 
 
 
