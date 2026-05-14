@@ -73,6 +73,8 @@
 🟣[INNER JOIN](<./INNER JOIN.js>)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;缺点是 JOIN 写死了，复用性不如 Association。<br>
 🌟[Association 写法](<./Association.js>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;理解起来有些复杂，短时间不能理解，请立刻使用JOIN。<br>
+
 
 <br>
 <br>
