@@ -96,4 +96,4 @@
 🟣[WHERE 条件](<./WHERE条件.js>)<br>
 🟣[带参数的 CDS View](<./带有参数取数据.md>)<br>
 🟣[Case写法](<./CASE.js>)<br>
-🔥
+🔥[带有金额和数量](<./金额＆数量.md>)<br>
