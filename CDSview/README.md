@@ -27,7 +27,10 @@
 下载完ADT插件后，接下来就是创建第一个CDS View的操作了。
 
 ## 🔶CDS 种类 <br>
-
+- Database view
+- Projection view
+- Maintenance view
+- Help view
 
 ## 🔶CDS View流程 <br>
 <details>
