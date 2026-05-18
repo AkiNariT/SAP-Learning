@@ -108,5 +108,5 @@
 - Association 的 Cardinality 要认真写
 - 金额和货币必须配套
 - 数量和单位必须配套
-- 权限检查不要乱关
+- [权限检查不要乱关](./CdsView的权限.md)
 - 聚合时一定注意 group by
