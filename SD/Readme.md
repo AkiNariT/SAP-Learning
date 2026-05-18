@@ -94,6 +94,19 @@ MIGO 入出庫処理<br>
  </details>
 
 
+ <details>
+ <summary><h4>🟥STO在庫転送</h4></summary>
+场景：A 工厂库存不足，从 B 工厂调货。
+<p>返品受注：返品受注 VA01 → 返品入荷 VL01N/VL02N → 入庫転記 → クレジットメモ VF01  </p>
+<img width="1063" height="748" alt="image" src="https://github.com/user-attachments/assets/2609323c-36a6-4c05-9c3c-53cd77d02f5f" />
+<br>
+ </details>
+
+
+
+
+
+
 
 </details>
 
