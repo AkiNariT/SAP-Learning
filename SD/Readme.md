@@ -35,21 +35,38 @@ MIGO 入出庫処理<br>
 </details>
 
 <details>
-<summary><h2>最基本的流程</h2></summary>  
+<summary><h2>流程</h2></summary>  
 外加工直送<br>
 
+
+### 🟩标准受注
 <p>标准受注：受注 VA01 → 出荷 VL01N/VL02N → 出庫転記 PGI → 請求 VF01</p>
-<p>返品受注：返品受注 VA01 → 返品入荷 VL01N/VL02N → 入庫転記 → クレジットメモ VF01  </p>
+<img width="1062" height="748" alt="image" src="https://github.com/user-attachments/assets/f7d80917-2229-4abf-93c1-1511871bbe9c" />
+<br>
+
+### 🟩直送
 <p>直送：受注 VA01 → 購買依頼 PR 自动生成 → 購買発注 ME21N → 仕入先直接出荷 → 仕入先請求 MIRO → 顧客請求 VF01</p>   
+<img width="1065" height="751" alt="image" src="https://github.com/user-attachments/assets/15f3e70a-d964-4469-834f-52ae52c83380" />
+<br>
+
+### 🟩返品受注
+<p>返品受注：返品受注 VA01 → 返品入荷 VL01N/VL02N → 入庫転記 → クレジットメモ VF01  </p>
+<img width="1063" height="748" alt="image" src="https://github.com/user-attachments/assets/2609323c-36a6-4c05-9c3c-53cd77d02f5f" />
+<br>
+
+### 🟩返品受注
 <p>無償出荷：無償受注 VA01 → 出荷 VL01N/VL02N → 出庫転記 PGI → 通常請求なし / 0円請求</p>
+<br><img width="1060" height="742" alt="image" src="https://github.com/user-attachments/assets/a1f4a553-acd3-4edd-976e-02b0032ff3bf" />
+
+
 </details>
 
-<h2>出荷常见问题</h2>  
+<h2>常见问题</h2>  
 <p>🟣出荷ポイント:</p>
 <p>出荷点决定这张货从哪个出货点处理。</p>
 
 <p>🟣ロット问题:</p>
-<p>ロット未入力</p>
+<p>品目ロット未入力</p>
 <p>ロット库存不足</p>
 <p>ロット过期</p>
 
