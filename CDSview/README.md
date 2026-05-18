@@ -103,3 +103,10 @@
 🟣[带参数的 CDS View](<./带有参数取数据.md>)<br>
 🟣[Case写法](<./CASE.js>)<br>
 🔥[带有金额和数量](<./金额＆数量.md>)<br>
+
+## ⭐CDS View的注意事项<br>
+- Association 的 Cardinality 要认真写
+- 金额和货币必须配套
+- 数量和单位必须配套
+- 权限检查不要乱关
+- 聚合时一定注意 group by
