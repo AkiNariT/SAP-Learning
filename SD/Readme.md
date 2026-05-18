@@ -96,9 +96,16 @@ MIGO 入出庫処理<br>
 
  <details>
  <summary><h4>🟥STO在庫転送</h4></summary>
-场景：A 工厂库存不足，从 B 工厂调货。
+  日本项目通常是以下几种说法：<br>
+> 在庫転送オーダー<br>
+> 在庫移送発注<br>
+> プラント間在庫転送<br>
+> 会社間在庫転送<br>
+<br>
+
+场景：A 工厂库存不足，从 B 工厂调货。<br>
+本质是：用“采购订单”的形式，把库存从一个工厂 / 公司转到另一个工厂 / 公司。<br>
 <p>返品受注：返品受注 VA01 → 返品入荷 VL01N/VL02N → 入庫転記 → クレジットメモ VF01  </p>
-<img width="1063" height="748" alt="image" src="https://github.com/user-attachments/assets/2609323c-36a6-4c05-9c3c-53cd77d02f5f" />
 <br>
  </details>
 
