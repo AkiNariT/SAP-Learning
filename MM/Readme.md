@@ -54,7 +54,7 @@ STO 是：本公司 A 工厂 / A 公司 → 本公司 B 工厂 / B 公司<br>
  - 类型二：跨公司 STO
   > 这时候就不只是库存移动了，还会出现：B 公司向 A 公司开内部請求。A 公司对 B 公司做内部采购。
 
- - [类型三：带 SD Delivery 的 STO](../SD/README.md)（参照`流程`中的`STO在庫転送`）
+ - [类型三：带 SD Delivery 的 STO](../SD/Readme.md)（参照`流程`中的`STO在庫転送`）
   > 这种模式会用到 SD 的出荷功能。
   
  </details>
