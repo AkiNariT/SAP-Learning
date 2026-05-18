@@ -105,7 +105,8 @@ MIGO 入出庫処理<br>
 
 场景：A 工厂库存不足，从 B 工厂调货。<br>
 本质是：用“采购订单”的形式，把库存从一个工厂 / 公司转到另一个工厂 / 公司。<br>
-<p>返品受注：返品受注 VA01 → 返品入荷 VL01N/VL02N → 入庫転記 → クレジットメモ VF01  </p>
+<img width="1077" height="808" alt="image" src="https://github.com/user-attachments/assets/b674075f-bc0c-41f5-be21-2f019969a46e" />
+
 <br>
  </details>
 
