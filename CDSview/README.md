@@ -97,7 +97,7 @@
 🟣[单表](<./单表CDS View (old).js>)<br>
 🟣[INNER JOIN](<./INNER JOIN.js>)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;缺点是 JOIN 写死了，复用性不如 Association。<br>
-🌟[Association 写法](<./Association.js>)<br>
+🌟[Association 写法](<./Association讲解.md>)<br> 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;理解起来有些复杂，短时间不能理解，请立刻使用JOIN。<br>
 🟣[WHERE 条件](<./WHERE条件.js>)<br>
 🟣[带参数的 CDS View](<./带有参数取数据.md>)<br>
