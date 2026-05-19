@@ -89,8 +89,10 @@
 </details>
 
 ## 🔶Odata 关联 <br>
-- T-code：`/IWFND/MAINT_SERVICE`
-- Projection view
+- 注册 OData Service
+  - T-code：`/IWFND/MAINT_SERVICE`
+- GUI 里测试 OData
+  - T-code：`/IWFND/GW_CLIENT`
 - Maintenance view
 - Help view
 
