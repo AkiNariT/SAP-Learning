@@ -22,6 +22,20 @@ define view ZCDS_SO_HEAD
 `@OData.publish: true` 的作用就是让 CDS 生成 `OData Service`<br>
 但生成后还需要去 `/IWFND/MAINT_SERVICE` 手动激活服务。<br>
 
+简单流程：<br>
+CDS View <br>
+↓ <br>
+@OData.publish: true <br>
+↓ <br>
+激活 CDS <br>
+↓ <br>
+/IWFND/MAINT_SERVICE 注册 Service <br>
+↓ <br>
+/IWFND/GW_CLIENT 测试 URL <br>
+
+
+---
+
 - 注册 OData Service
   - T-code：`/IWFND/MAINT_SERVICE`
 - GUI 里测试 OData
