@@ -110,4 +110,4 @@
 - 数量和单位必须配套
 - [权限检查不要乱关](./CdsView的权限.md)
 - 聚合时一定注意 group by
-- 不加@OData.publish: true是无法连接OData的
+- 不加` @OData.publish: true `是无法连接OData的
