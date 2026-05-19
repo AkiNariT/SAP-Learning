@@ -36,9 +36,18 @@ CDS View <br>
 
 ---
 
+### 重要的T-code：
 - 注册 OData Service
   - T-code：`/IWFND/MAINT_SERVICE`
 - GUI 里测试 OData
   - T-code：`/IWFND/GW_CLIENT`
-- Maintenance view
-- Help view
+- 看 Gateway 前端错误
+  - T-code：`/IWFND/ERROR_LOG`
+- 看 ABAP 后端错误
+  - T-code：`/IWBEP/ERROR_LOG`
+- 手动开发 OData V2
+  - T-code：`SEGW`
+- 检查 HTTP 服务节点是否激活
+  - T-code：`SICF`
+
+
