@@ -88,7 +88,11 @@
 
 </details>
 
-
+## 🔶Odata 关联 <br>
+- T-code：`/IWFND/MAINT_SERVICE`
+- Projection view
+- Maintenance view
+- Help view
 
 ## 🔶CDS View的代码分享<br>
 🟣代表简单难度&nbsp;🌟代表高难度&nbsp;🔥代表重要<br>
