@@ -1,5 +1,5 @@
 ## [🧐SAP BDC调查学习]()
-## [🤖SAP AI调查学习]()
+## [🤖SAP AI Joule调查学习]()
 
 ## [SD相关](./SD/Readme.md)
 
