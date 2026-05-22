@@ -3,6 +3,9 @@
 Agent开发也将是多层级开发。<br>
 需要的人将是懂得数据分析或者业务流的Python开发者。<br>
 
+简单理解，Joule是sap提供的底层LLM。<br>
+我们根据底层LLM做Agent扩张。
+
 ### Joule 作为开发助手的应用。
 Joule的实时使用。
 [https://github.com/SAP-samples/teched2024-AD181](https://github.com/SAP-samples/abap-platform-rap120)
