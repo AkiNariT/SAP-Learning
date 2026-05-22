@@ -4,7 +4,7 @@ Agent开发也将是多层级开发。<br>
 需要的人将是懂得数据分析或者业务流的Python开发者。<br>
 
 ### Joule 作为开发助手的应用。
-Joule的时使用。
+Joule的实时使用。
 [https://github.com/SAP-samples/teched2024-AD181](https://github.com/SAP-samples/abap-platform-rap120)
 
 
