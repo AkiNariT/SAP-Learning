@@ -38,7 +38,7 @@ BDC 是企业数据、分析、的数据平台。<br>
 
 
 ## 使用的工具
- - Datasphere（重要，因为SQL和CDS VIEW相对简单）
+ - [Datasphere](./Datasphere.md)
  - nalytics Cloud / SAC
  - SQL
  - S/4HANA CDS View
