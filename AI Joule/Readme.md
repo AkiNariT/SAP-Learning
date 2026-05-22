@@ -1,3 +1,7 @@
+关于Joule的教程
+https://github.com/SAP-samples/teched2024-AD181
+
+
 # AI的本质，概率论。
 
 1. 简单的回答BOT。
