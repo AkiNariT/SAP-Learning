@@ -114,14 +114,14 @@ STO 虽然是 MM 发起，但发货方需要执行类似销售出货的动作。
 <details>
  <summary><h2>常见问题</h2></summary> 
 
-* 出荷常见问题 <br>
-🟣出荷ポイント:<br>
-出荷点决定这张货从哪个出货点处理。<br>
+### 出荷常见问题 <br>
+🟣出荷ポイント:<br> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;出荷点决定这张货从哪个出货点处理。<br>
 
 🟣ロット问题:<br>
-品目ロット未入力<br>
-ロット库存不足<br>
-ロット过期<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;品目ロット未入力<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ロット库存不足<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ロット过期<br>
  
 </details>
 
