@@ -1,4 +1,4 @@
-关于Joule的教程
+关于Joule的开发应用程序和流程
 https://github.com/SAP-samples/teched2024-AD181
 
 
