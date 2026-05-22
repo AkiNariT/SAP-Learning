@@ -114,7 +114,8 @@ STO 虽然是 MM 发起，但发货方需要执行类似销售出货的动作。
 <details>
  <summary><h2>常见问题</h2></summary> 
 
-### 出荷常见问题 <br>
+出荷常见问题：
+
 🟣出荷ポイント:<br> 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;出荷点决定这张货从哪个出货点处理。<br>
 
