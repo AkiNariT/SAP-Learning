@@ -41,7 +41,7 @@ BDC 是企业数据、分析、的数据平台。<br>
 <img width="1580" height="682" alt="image" src="https://github.com/user-attachments/assets/fe4f9c74-188f-4c87-a732-a471f7e7cea4" />
 
 ## 使用的工具
- - [Datasphere](./Datasphere.md)   （https://github.com/SAP-archive/teched2023-DA183v）
+ - [Datasphere](./Datasphere.md)   （实力 https://github.com/SAP-archive/teched2023-DA183v ）
  - nalytics Cloud / SAC
  - SQL
  - S/4HANA CDS View
