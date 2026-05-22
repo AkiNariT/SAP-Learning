@@ -36,8 +36,8 @@ BDC 是企业数据、分析、的数据平台。<br>
 所以工作流程应该是。<br>
 报表需求 -> 找寻各个系统的数据来源 -> 数据表之间抽取逻辑 -> 数据建模（重点） -> 测试等
 
-方向：
-掌握Datasphere，SAC，BW会更快进入到BDC方向。
+### 方向：
+### 掌握Datasphere，SAC，BW会更快进入到BDC方向。
 
 ## 使用的工具
  - [Datasphere](./Datasphere.md)
