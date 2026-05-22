@@ -38,6 +38,7 @@ BDC 是企业数据、分析、的数据平台。<br>
 
 ### 方向：
 ### 掌握Datasphere，SAC，BW会更快进入到BDC方向。
+<img width="1580" height="682" alt="image" src="https://github.com/user-attachments/assets/fe4f9c74-188f-4c87-a732-a471f7e7cea4" />
 
 ## 使用的工具
  - [Datasphere](./Datasphere.md)
