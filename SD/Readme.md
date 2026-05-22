@@ -1,5 +1,4 @@
 # SAP-SD
-
 <details>
  <summary><h2>简单的t-cd相关记录</h2></summary>
 🟦受注相关<br>
@@ -93,7 +92,6 @@ MIGO 入出庫処理<br>
 <img width="1425" height="948" alt="image" src="https://github.com/user-attachments/assets/7eea0421-c4aa-47b5-b7e6-5279cdcafdc9" />
  </details>
 
-
  <details>
  <summary><h4>🟥STO在庫転送</h4></summary>
   日本项目通常是以下几种说法：<br>
@@ -115,13 +113,15 @@ STO 虽然是 MM 发起，但发货方需要执行类似销售出货的动作。
 
 <details>
  <summary><h2>常见问题</h2></summary> 
-<p>🟣出荷ポイント:</p>
-<p>出荷点决定这张货从哪个出货点处理。</p>
 
-<p>🟣ロット问题:</p>
-<p>品目ロット未入力</p>
-<p>ロット库存不足</p>
-<p>ロット过期</p>
+* 出荷常见问题 
+🟣出荷ポイント:<br>
+出荷点决定这张货从哪个出货点处理。<br>
+
+🟣ロット问题:<br>
+品目ロット未入力<br>
+ロット库存不足<br>
+ロット过期<br>
  
 </details>
 
