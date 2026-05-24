@@ -1,92 +1,82 @@
 ```text
-SD模块 常见问题与解决方法 + T-code
-│
 ├─ 受注 Sales Order
-│  ├─ 受注登録・照会
-│  │  ├─ VA01 创建受注
-│  │  ├─ VA02 修改受注
-│  │  └─ VA03 照会受注
-│  ├─ 価格確認
-│  │  ├─ VK11 创建条件レコード
-│  │  ├─ VK12 修改条件レコード
-│  │  ├─ VK13 照会条件レコード
-│  │  └─ VA03 → 条件分析
-│  └─ 得意先・品目確認
-│     ├─ XD03 / VD03 得意先マスタ照会
-│     ├─ BP Business Partner
-│     └─ MM03 品目マスタ照会
+│  ├─ 受注登録できない
+│  │  ├─ 得意先マスタ確認
+│  │  ├─ 品目マスタ確認
+│  │  ├─ 販売エリア確認
+│  │  └─ 与信ブロック確認
+│  │
+│  ├─ 価格が出ない
+│  │  ├─ 条件レコード確認
+│  │  ├─ Pricing Procedure確認
+│  │  ├─ Condition Type確認
+│  │  └─ Access Sequence確認
+│  │
+│  └─ 明細カテゴリ不一致
+│     ├─ 受注タイプ確認
+│     ├─ Item Category Group確認
+│     └─ 明細カテゴリ決定確認
 │
 ├─ 出荷 Delivery
-│  ├─ 出荷伝票
-│  │  ├─ VL01N 创建出荷/返品納品
-│  │  ├─ VL02N 修改出荷伝票
-│  │  └─ VL03N 照会出荷伝票
-│  ├─ 出荷対象確認
-│  │  ├─ VL10A 受注別出荷対象一覧
-│  │  └─ VL10C 品目別出荷対象一覧
-│  └─ 在庫確認
-│     ├─ MMBE 在庫一覧
-│     ├─ MD04 在庫/所要量一覧
-│     └─ MB51 品目伝票一覧
+│  ├─ 出荷伝票作成不可
+│  │  ├─ Shipping Point確認
+│  │  ├─ Delivery Block確認
+│  │  └─ Copy Control確認
+│  │
+│  ├─ Pickingできない
+│  │  ├─ 在庫確認 MMBE
+│  │  ├─ Storage Location確認
+│  │  └─ Batch確認
+│  │
+│  └─ PGIできない
+│     ├─ Picking完了確認
+│     ├─ 601移動タイプ確認
+│     └─ 会計転記確認
 │
 ├─ 請求 Billing
-│  ├─ 請求伝票
-│  │  ├─ VF01 创建請求
-│  │  ├─ VF02 修改請求
-│  │  └─ VF03 照会請求
-│  ├─ 請求対象
-│  │  ├─ VF04 請求処理一覧
-│  │  └─ VFX3 請求会計エラー確認
-│  └─ 会計確認
-│     ├─ FB03 会計伝票照会
-│     └─ FBL5N 得意先明細照会
+│  ├─ 請求伝票作成不可
+│  │  ├─ Billing Block確認
+│  │  ├─ PGI済確認
+│  │  └─ VTFL確認
+│  │
+│  ├─ 請求金額不一致
+│  │  ├─ Pricing Type確認
+│  │  ├─ 税コード確認
+│  │  └─ 条件レコード確認
+│  │
+│  └─ FI伝票未作成
+│     ├─ VKOA確認
+│     ├─ 勘定キー確認
+│     └─ FIエラーログ確認
 │
 ├─ 返品 Returns
-│  ├─ 返品受注
-│  │  ├─ VA01 创建返品受注 RE
-│  │  ├─ VA02 修改返品受注
-│  │  └─ VA03 照会返品受注
-│  ├─ 返品入荷
-│  │  ├─ VL01N 创建返品納品 LR
-│  │  ├─ VL02N 返品入荷/転記
-│  │  └─ VL03N 照会返品納品
-│  └─ 返金
-│     ├─ VF01 创建Credit Memo
-│     ├─ VF03 照会Credit Memo
-│     └─ FB03 照会会計伝票
-│
-├─ 共通排查 Common
-│  ├─ 権限
-│  │  ├─ SU53 権限エラー確認
-│  │  └─ PFCG ロール確認
-│  ├─ ログ
-│  │  ├─ SLG1 Application Log
-│  │  ├─ SM13 Update Error
-│  │  ├─ ST22 Dump確認
-│  │  └─ SM37 Job確認
-│  └─ カスタマイズ確認
-│     ├─ SPRO IMG設定
-│     ├─ VOV8 受注伝票タイプ
-│     ├─ VOV7 明細カテゴリ
-│     ├─ VOV6 納入日程行カテゴリ
-│     ├─ VTAA 受注→受注 Copy Control
-│     ├─ VTLA 受注→出荷 Copy Control
-│     └─ VTFL 出荷→請求 Copy Control
+│  ├─ 返品受注作成不可
+│  │  ├─ RE返品伝票確認
+│  │  ├─ 参照元伝票確認
+│  │  └─ 返品理由確認
+│  │
+│  ├─ 返品入荷不可
+│  │  ├─ LR返品納品確認
+│  │  ├─ VL01N確認
+│  │  └─ 651/653確認
+│  │
+│  └─ 返金できない
+│     ├─ Credit Memo確認
+│     ├─ 請求ブロック確認
+│     └─ FI転記確認
 │
 └─ IF・開発 Interface / Add-on
-   ├─ IDoc
-   │  ├─ WE02 / WE05 IDoc確認
-   │  ├─ WE19 IDocテスト
-   │  └─ BD87 IDoc再処理
-   ├─ OData / REST
-   │  ├─ /IWFND/GW_CLIENT Gateway Client
-   │  ├─ /IWFND/ERROR_LOG Gateway Error Log
-   │  └─ /IWBEP/ERROR_LOG Backend Error Log
-   └─ Debug / 開発
-      ├─ SE38 Program
-      ├─ SE37 Function Module
-      ├─ SE80 Object Navigator
-      ├─ SE11 Table / Structure
-      ├─ SE16N Table確認
-      └─ SM30 Zテーブルメンテ
+   ├─ IDocエラー
+   │  ├─ WE02/WE05確認
+   │  └─ BD87再処理
+   │
+   ├─ OData/RESTエラー
+   │  ├─ /IWFND/GW_CLIENT確認
+   │  └─ Payload確認
+   │
+   └─ Add-on不具合
+      ├─ Debug
+      ├─ User Exit確認
+      ├─ BAdI確認
+      └─ Zテーブル確認
 ```
