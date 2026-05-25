@@ -4,6 +4,9 @@
 加入PP模块。虽然PP模块只对BOM有理解，但sd和MM都完成后，品目的相关数据已经完善。加入PP顺理成章。<br>
 
 
+## Spro配置顺序
+
+
 ## [🧐SAP BDC调查学习](./BDC/Readme.md)
 ## [🤖SAP AI Joule调查学习](./AI_Joule/Readme.md)
 
