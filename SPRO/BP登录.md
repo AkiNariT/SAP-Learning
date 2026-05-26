@@ -22,7 +22,9 @@
 设置成功。
 <img width="1918" height="1132" alt="image" src="https://github.com/user-attachments/assets/c8605241-14a4-42f8-8c74-3a1c4630ed8a" />
 
+<img width="1918" height="1136" alt="image" src="https://github.com/user-attachments/assets/2010b10a-4645-4a18-a242-20d5612eb4e0" />
+税番号タイプ是必须填写项目，因为学习环境，目前税番号タイプ有些问题，我们选择自己登录。<br>
 
-
+[税番号タイプ维护]
 
 这里选择SD用的FLCU01<br>
