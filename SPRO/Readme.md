@@ -2,6 +2,7 @@
 <summary><h2>配置顺序</h2></summary>
 即便配置SD。也是需要其他模块的。<br>
 因此，我们要搭配其他模块一起配置。<br>
+
  - FI 基础<br>
  - MM 基础<br>
  - BP/CVI<br>
