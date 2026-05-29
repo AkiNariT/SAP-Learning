@@ -1,5 +1,0 @@
-## 製品部門 ZX
-
-字段：SPART
-
-<img width="1227" height="282" alt="image" src="https://github.com/user-attachments/assets/70ed5eae-e05b-4f2e-8360-1b76d308ba71" />
