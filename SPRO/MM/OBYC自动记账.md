@@ -2,6 +2,16 @@
 
 T-CD： OBYC <br>
 
+暂时维护BSX和GBB。后期还需要PRD。
+| Transaction Key | 勘定修正  |  評価クラス |      G/L |
+| --------------- | ----- | -----: | -------: |
+| `BSX`           | 空白    | `3100` | `300000` |
+| `GBB`           | `BSA` | `3100` | `599000` |
+| `GBB`           | `VAX` | `3100` | `500000` |
+| `PRD`           | 空白    | `3100` | `599000` |
+
+
+
 <img width="1918" height="360" alt="image" src="https://github.com/user-attachments/assets/2dc56d1a-d287-41f6-bc7f-1ff806167bd1" />
 
 ## OBYC 需要先维护这几个
