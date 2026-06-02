@@ -2,4 +2,4 @@
 
 T-CD: GSP_LZ2 <br>
 
-<img width="1918" height="1135" alt="image" src="https://github.com/user-attachments/assets/4c7146f9-f19c-4c20-aa1a-c6ea7941383c" />
+<img width="1918" height="563" alt="image" src="https://github.com/user-attachments/assets/cedec256-1d87-44e4-b56e-7b5b1654d79e" />
