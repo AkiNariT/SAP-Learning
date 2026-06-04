@@ -1,6 +1,7 @@
 ## 販売組織 ZLD0
 
-字段：VKORG
+T-CD: OVX5 <br>
+字段：VKORG<br>
 
 <img width="1918" height="1135" alt="image" src="https://github.com/user-attachments/assets/fec250ca-60da-4481-8e6a-35ea7ae12d26" />
 
