@@ -205,8 +205,9 @@
 
 <br>
 
-<details><h2>数据结构</h2>
-
+<details> 
+   <summary><h2>数据结构</h2></summary>
+   
 - 当前数据结构
   - ```text
     会社コード ZLD0
