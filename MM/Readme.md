@@ -1,4 +1,4 @@
-# MM基本逻辑
+<img width="1055" height="1491" alt="ChatGPT Image 2026年6月12日 18_03_57" src="https://github.com/user-attachments/assets/224aacfb-b90e-4c6a-8f1d-688b2628d1bc" /># MM基本逻辑
 ME51N 采购申请 <br>
   ↓<br>
 ME21N 采购订单<br>
@@ -56,7 +56,7 @@ STO 是：本公司 A 工厂 / A 公司 → 本公司 B 工厂 / B 公司<br>
 大阪工厂收货<br>
 <br>
 <br>
-  
+
 - ### STO 有三种常见类型
  - 类型一：同公司内 STO  
   > 因为还是同一个公司代码内部，通常不会产生对外销售收入或供应商应付。<br>
@@ -68,6 +68,16 @@ STO 是：本公司 A 工厂 / A 公司 → 本公司 B 工厂 / B 公司<br>
   > 这种模式会用到 SD 的出荷功能。
   
  </details>
+
+<details>
+  <summary><h2>🟩消耗品采购</h2></summary>
+<img width="1055" height="1491" alt="ChatGPT Image 2026年6月12日 18_03_57" src="https://github.com/user-attachments/assets/61fc6836-c1cf-406b-9a73-b22f06b9c8fe" />
+
+
+ </details>
+
+
+
 
 ---
 
@@ -97,4 +107,11 @@ migo入库的移动type:<br>
 | `MCHA`            | Batch 主数据，工厂层级相关     |
 | `MCHB`            | Batch 库存             |
 | `MATDOC` / `MSEG` | 物料凭证中的 Batch         |
+
+| 表      | 内容            |
+| ------ | ------------- |
+| `EKKO` | PO Header     |
+| `EKPO` | PO Item       |
+| `EKET` | Schedule Line |
+| `EKBE` | PO History    |
 
