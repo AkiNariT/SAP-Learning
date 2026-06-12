@@ -1,4 +1,4 @@
-<img width="1055" height="1491" alt="ChatGPT Image 2026年6月12日 18_03_57" src="https://github.com/user-attachments/assets/224aacfb-b90e-4c6a-8f1d-688b2628d1bc" /># MM基本逻辑
+# MM基本逻辑
 ME51N 采购申请 <br>
   ↓<br>
 ME21N 采购订单<br>
