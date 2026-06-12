@@ -110,8 +110,7 @@ STO 虽然是 MM 发起，但发货方需要执行类似销售出货的动作。
  </details>
 </details>
 
-<details>
-  <summary><h2>テーブル</h2></summary>
+
 | 业务对象      | Header 表                   | Item 表 | 说明           |
 | --------- | -------------------------- | ------ | ------------ |
 | 销售订单 / 受注 | `VBAK`                     | `VBAP` | SD 最核心       |
@@ -125,8 +124,6 @@ STO 虽然是 MM 发起，但发货方需要执行类似销售出货的动作。
 | 品目主数据     | `MARA` / `MARC` / `MVKE`   | -      | 品目           |
 | 会计凭证      | `BKPF` / `BSEG` / `ACDOCA` | -      | FI 联动        |
 
- 
-</details>
 
 
 <details>
