@@ -110,6 +110,24 @@ STO 虽然是 MM 发起，但发货方需要执行类似销售出货的动作。
  </details>
 </details>
 
+<details>
+  <summary><h2>テーブル</h2></summary>
+| 业务对象      | Header 表                   | Item 表 | 说明           |
+| --------- | -------------------------- | ------ | ------------ |
+| 销售订单 / 受注 | `VBAK`                     | `VBAP` | SD 最核心       |
+| 交货 / 出荷   | `LIKP`                     | `LIPS` | 出荷、PGI       |
+| 开票 / 請求   | `VBRK`                     | `VBRP` | Billing      |
+| 凭证流       | `VBFA`                     | -      | 看前后凭证关系      |
+| Partner   | `VBPA`                     | -      | 受注先、出荷先、請求先等 |
+| 日程行       | -                          | `VBEP` | 納期、确认数量      |
+| 条件金额      | `PRCD_ELEMENTS` / `KONV`   | -      | 价格条件         |
+| 客户主数据     | `KNA1` / `KNB1` / `KNVV`   | -      | 得意先          |
+| 品目主数据     | `MARA` / `MARC` / `MVKE`   | -      | 品目           |
+| 会计凭证      | `BKPF` / `BSEG` / `ACDOCA` | -      | FI 联动        |
+
+ 
+</details>
+
 
 <details>
  <summary><h2>常见问题</h2></summary> 
