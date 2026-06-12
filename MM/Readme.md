@@ -1,4 +1,14 @@
 # MM基本逻辑
+ME51N 采购申请 <br>
+  ↓<br>
+ME21N 采购订单<br>
+  ↓<br>
+MIGO 入库<br>
+  ↓<br>
+MIRO 发票校验<br>
+  ↓<br>
+FI 会计凭证 / 付款<br>
+也就是常说的:P2P/PTP  (購買から支払まで) <br>
 
 <details>
   <summary><h2>🟩ERS流程</h2></summary>
