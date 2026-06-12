@@ -44,7 +44,7 @@ MIGO 入出庫処理<br>
 
  <details>
  <summary><h4>🟩直送</h4></summary>
-<p>`明細カテゴリー`控制</p>
+<p> `明細カテゴリー` 控制</p>
 <p>直送：受注 VA01 → 購買依頼 PR 自动生成 → 購買発注 ME21N → 仕入先直接出荷 → 仕入先請求 MIRO → 顧客請求 VF01</p>   
 <img width="1065" height="751" alt="image" src="https://github.com/user-attachments/assets/15f3e70a-d964-4469-834f-52ae52c83380" />
 <br>
