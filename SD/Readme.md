@@ -46,7 +46,9 @@ MIGO 入出庫処理<br>
 
  <details>
  <summary><h4>🟩直送</h4></summary>
-<p> `明細カテゴリー` 控制</p>
+
+`明細カテゴリー`控制
+ 
 <p>直送：受注 VA01 → 購買依頼 PR 自动生成 → 購買発注 ME21N → 仕入先直接出荷 → 仕入先請求 MIRO → 顧客請求 VF01</p>   
 <img width="1065" height="751" alt="image" src="https://github.com/user-attachments/assets/15f3e70a-d964-4469-834f-52ae52c83380" />
 <br>
@@ -61,6 +63,9 @@ MIGO 入出庫処理<br>
 
  <details> 
   <summary><h4>🟩無償出荷</h4></summary>
+
+`明細カテゴリー`控制
+  
 <p>無償出荷：無償受注 VA01 → 出荷 VL01N/VL02N → 出庫転記 PGI → 通常請求なし / 0円請求</p>
 <br><img width="1060" height="742" alt="image" src="https://github.com/user-attachments/assets/a1f4a553-acd3-4edd-976e-02b0032ff3bf" />
  </details>
