@@ -18,6 +18,7 @@
 
 [第 2 步：创建 Interface Root View Entity](./Interface_Root_View_Entity.js)
 <br>
+建立 `ZI_RAP_CONS_REQ` <br>
 <img width="640" height="617" alt="image" src="https://github.com/user-attachments/assets/1b7c4048-58b5-487f-8da0-11fbb2cf77c7" />
 
 [第 3 步：创建 Behavior Definition](./ZI_RAP_CONS_REQ.js)
