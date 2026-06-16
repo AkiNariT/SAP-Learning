@@ -71,9 +71,71 @@ ZC_RAP_CONS_REQ = 对外发布用视图<br>
 
 
 ## 第 6 步：创建 ZUI_RAP_CONS_REQ
+这一步不是业务逻辑，而是控制 Fiori Preview 画面显示：
+
+```text
+一览画面显示哪些字段
+查询条件有哪些
+明细页怎么分组
+标题显示什么
+```
+
+<img width="837" height="762" alt="image" src="https://github.com/user-attachments/assets/d1ba157d-773b-400a-a447-656b1e23bddc" />
+<img width="837" height="762" alt="image" src="https://github.com/user-attachments/assets/c82b0931-a249-4e08-921e-0417102dbadc" />
 
 
+[代码](./ZUI_RAP_CONS_REQ.js)
 
 
+## 第 7 步：创建 Service Definition
 
+把 ZC_RAP_CONS_REQ 暴露成服务。
+<img width="640" height="617" alt="image" src="https://github.com/user-attachments/assets/528034c2-707b-495f-8cfd-9c6920763355" />
 
+<img width="837" height="762" alt="image" src="https://github.com/user-attachments/assets/0895defc-3acf-4d64-a698-6f165cf699a9" />
+<img width="732" height="137" alt="image" src="https://github.com/user-attachments/assets/6db9bf53-b4cc-4d08-abf0-3749f015c323" />
+
+核心是：
+
+```abap
+expose ZC_RAP_CONS_REQ as ConsumableRequest;
+```
+
+含义:<br>
+把 Projection View ZC_RAP_CONS_REQ 暴露出去<br>
+外部服务里的 Entity 名叫 ConsumableRequest<br>
+<br>
+后面 OData V4 里你会看到： `ConsumableRequest`<br>
+
+---
+
+目前已经有的：
+```TEXT
+ZTRAP_CONS_REQ
+↓
+ZI_RAP_CONS_REQ
+↓
+ZI_RAP_CONS_REQ Behavior Definition
+↓
+ZC_RAP_CONS_REQ
+↓
+ZC_RAP_CONS_REQ Projection Behavior
+↓
+ZUI_RAP_CONS_REQ
+↓
+ZSD_RAP_CONS_REQ
+```
+
+## 第 8 步：创建 Service Binding
+
+这一步是真正把服务发布成 OData V4 UI 服务，然后打开 Fiori Preview。
+<img width="837" height="762" alt="image" src="https://github.com/user-attachments/assets/63e58c27-2fb8-4425-842f-29be16a1b8f5" />
+<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/792c0887-996f-46dd-abcb-907646710fe6" />
+1.有效化 <br>
+2.Publish <br>
+
+<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/5120c05c-b321-44ab-af71-08b624c1c200" />
+发布成功。<br>
+点击Preview。<br>
+可以看到：`Consumable Requests`<br>
+然后可以测试：Create,Edit,Delete<br>
