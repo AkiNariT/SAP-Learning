@@ -121,7 +121,7 @@ ZC_RAP_CONS_REQ = 对外发布用视图<br>
 <img width="837" height="762" alt="image" src="https://github.com/user-attachments/assets/5be526cc-7220-44b2-8e5d-44d8d5ef2ea3" />
 <img width="837" height="762" alt="image" src="https://github.com/user-attachments/assets/22ed30c5-06e7-4a61-80a6-a5e81a99db36" />
 
-[代码](./创建ProjectionView.js)
+[代码](./创建ProjectionView.cds)
 
 ## 第 5 步：创建 Projection Behavior
 找到 `ZC_RAP_CONS_REQ`，然后右键`New Behavior Definition`。
