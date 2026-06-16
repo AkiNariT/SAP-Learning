@@ -1,7 +1,7 @@
 @AccessControl.authorizationCheck: #NOT_REQUIRED
 @EndUserText.label: 'RAP Consumable Request Interface View'
 @Metadata.ignorePropagatedAnnotations: true
-define root view entity ZI_RAP_CONS_REQ as select from ZTRAP_CONS_REQ
+define root view entity ZI_RAP_CONS_REQ as select from ztrap_cons_req
 {
     
   key request_id as RequestID,
@@ -10,11 +10,8 @@ define root view entity ZI_RAP_CONS_REQ as select from ZTRAP_CONS_REQ
       requester    as Requester,
       item_text    as ItemText,
 
-      @Semantics.quantity.unitOfMeasure: 'UnitCode'
       quantity     as Quantity,
-
-      @Semantics.unitOfMeasure: true
-      unit_code    as UnitCode,
+      unit         as UnitCode,
 
       cost_center  as CostCenter,
       status       as Status,
