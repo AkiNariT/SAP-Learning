@@ -33,5 +33,33 @@ Eclipse 会打开浏览器登录页面。<br>
 <img width="837" height="762" alt="image" src="https://github.com/user-attachments/assets/add2f9bd-56bb-47a5-bc30-731e2696936d" />
 <br>
 
-
  [代码](./Database_Table-ZTRAP_CONS_REQ.js)
+
+## 第 2 步：Interface Root View Entity：ZI_RAP_CONS_REQ
+<img width="640" height="617" alt="image" src="https://github.com/user-attachments/assets/1226cc61-ee86-48a4-a4eb-2c0e8f2bd639" />
+<img width="837" height="762" alt="image" src="https://github.com/user-attachments/assets/174f6c35-d718-4d7f-8afe-238596c8efac" />
+<img width="837" height="762" alt="image" src="https://github.com/user-attachments/assets/265e8113-418a-4c6e-b55e-bf61979e3436" />
+
+[代码](./ZI_RAP_CONS_REQ.js)
+
+
+## 第 3 步：创建 Behavior Definition
+选择ZI_RAP_CONS_REQ，右键选择New Behavior Definition <br>
+<img width="366" height="27" alt="image" src="https://github.com/user-attachments/assets/50ccf76f-5dfd-429a-adcc-797acff747c7" />
+<img width="837" height="762" alt="image" src="https://github.com/user-attachments/assets/09036c0b-f5fa-4508-a9ba-b34733d70ad4" />
+
+[代码](./Behavior_Definition.js)
+
+## 第 4 步：创建 Projection View
+ZI_RAP_CONS_REQ = 内部业务对象视图<br>
+ZC_RAP_CONS_REQ = 对外发布用视图<br>
+后面 OData Service 不直接暴露 ZI_，而是暴露 ZC_。<br>
+
+<img width="640" height="617" alt="image" src="https://github.com/user-attachments/assets/584daf22-2de5-46eb-b237-0b57e98a0482" />
+<img width="837" height="762" alt="image" src="https://github.com/user-attachments/assets/5be526cc-7220-44b2-8e5d-44d8d5ef2ea3" />
+<img width="837" height="762" alt="image" src="https://github.com/user-attachments/assets/22ed30c5-06e7-4a61-80a6-a5e81a99db36" />
+
+[代码](./创建ProjectionView.js)
+
+## 第 5 步：创建 Projection Behavior
+找到 `ZC_RAP_CONS_REQ`，然后右键`New Behavior Definition`。
