@@ -12,7 +12,6 @@ define table ztrap_cons_req {
   requester             : abap.char(40);
   item_text             : abap.char(80);
 
-
   quantity              : abap.dec(13,3);
 
   unit                  : abap.char(3);
