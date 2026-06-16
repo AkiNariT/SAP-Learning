@@ -104,7 +104,8 @@ created_at : abp_creation_tstmpl; (创建时间戳。)
 <img width="366" height="27" alt="image" src="https://github.com/user-attachments/assets/50ccf76f-5dfd-429a-adcc-797acff747c7" />
 <img width="837" height="762" alt="image" src="https://github.com/user-attachments/assets/09036c0b-f5fa-4508-a9ba-b34733d70ad4" />
 
-[代码](./Behavior_Definition.js)
+[代码](./Behavior_Definition.cds)
+
 
 创建类 ZBP_I_RAP_CONS_REQ
 <img width="837" height="762" alt="image" src="https://github.com/user-attachments/assets/657bc1c1-432f-4c56-878d-6fd7cbed7f7f" />
