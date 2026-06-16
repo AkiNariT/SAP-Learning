@@ -126,10 +126,68 @@ ZC_RAP_CONS_REQ = 对外发布用视图<br>
 ## 第 5 步：创建 Projection Behavior
 找到 `ZC_RAP_CONS_REQ`，然后右键`New Behavior Definition`。
 
-<img width="632" height="210" alt="image" src="https://github.com/user-attachments/assets/18da2f72-c028-46d0-8649-5182ad693fe7" />
+<img width="636" height="326" alt="image" src="https://github.com/user-attachments/assets/68e1f59e-bc00-4042-94f0-0ad356060895" />
+
+<br>
 含义:<br>
 底层有这些行为<br>
 我对外也开放这些行为<br>
+
+代码理解:<br>
+Projection Behavior 只是在外层说：
+```text
+底层有 create，我对外也开放 create
+底层有 update，我对外也开放 update
+底层有 draft，我对外也开放 draft
+
+```
+
+```CDS
+strict ( 2 );  (让 RAP 编译器更严格地检查)
+use draft;    (很关键，Projection View 对外开放 Draft 能力。Draft暴露Create等按钮)
+
+Interface Behavior 里写：with draft;
+Projection Behavior 里写：use draft;
+上述两个必须配套。
+ZI Behavior: with draft
+↓
+ZC Behavior: use draft
+↓
+OData V4 UI Service
+↓
+Fiori Elements 显示 Create / Edit
+
+define behavior for ZC_RAP_CONS_REQ alias ConsReq
+给 ZC_RAP_CONS_REQ 这个 Projection View 定义行为。alias ConsReq 是给这个 Entity 起一个别名。
+以后在 Behavior 里可以用：ConsReq
+
+use create;  (对外开放新增功能。)
+
+
+use action Edit;  (把正式数据切换成 Draft 编辑状态)
+use action Activate;  (把 Draft 数据激活成正式数据)
+use action Discard;  (放弃 Draft 修改)
+use action Resume;  (继续编辑已有 Draft)
+use action Prepare;  (Draft 保存/激活前的准备动作)
+上述不是自定义的业务按钮，而是 RAP Draft 标准动作。
+
+```
+Interface 和 Projection里的对应<br>
+ZI 层：定义能力<br>
+ZC 层：开放能力<br>
+Projection Behavior 一般不写真正业务逻辑。<br>
+| Interface Behavior                | Projection Behavior    |
+| --------------------------------- | ---------------------- |
+| `with draft;`                     | `use draft;`           |
+| `create;`                         | `use create;`          |
+| `update;`                         | `use update;`          |
+| `delete;`                         | `use delete;`          |
+| `draft action Edit;`              | `use action Edit;`     |
+| `draft action Activate;`          | `use action Activate;` |
+| `draft action Discard;`           | `use action Discard;`  |
+| `draft action Resume;`            | `use action Resume;`   |
+| `draft determine action Prepare;` | `use action Prepare;`  |
+
 
 
 ## 第 6 步：创建 ZUI_RAP_CONS_REQ
@@ -146,7 +204,80 @@ ZC_RAP_CONS_REQ = 对外发布用视图<br>
 <img width="837" height="762" alt="image" src="https://github.com/user-attachments/assets/c82b0931-a249-4e08-921e-0417102dbadc" />
 
 
-[代码](./ZUI_RAP_CONS_REQ.js)
+[代码](./ZUI_RAP_CONS_REQ.cds)
+
+代码理解：<br>
+ZC_RAP_CONS_REQ = 对外数据模型<br>
+ZUI_RAP_CONS_REQ = 给这个模型追加 UI 注解<br>
+Fiori Elements = 根据这些 UI 注解自动生成画面<br>
+
+```cds
+@UI: {
+  headerInfo: {
+    typeName: 'Consumable Request',
+    typeNamePlural: 'Consumable Requests',
+    title: {
+      type: #STANDARD,
+      value: 'ItemText'
+    },
+    description: {
+      value: 'Status'
+    }
+  }
+}
+这个控制 Object Page 顶部标题区域。
+
+typeName: 'Consumable Request'
+比如打开一条记录时，系统知道这个对象叫：Consumable Request
+
+typeNamePlural: 'Consumable Requests'
+复数名称。List Report 标题里可能显示：Consumable Requests
+
+
+@UI.facet
+这个控制 Object Page 明细页的区块分组。
+例如：
+@UI.facet: [
+  {
+    id: 'General',
+    purpose: #STANDARD,
+    type: #IDENTIFICATION_REFERENCE,
+    label: 'General Information',
+    position: 10
+  }
+]
+Object Page 里的一个 Section / 区块
+
+@UI.lineItem
+这个控制 List Report 一览画面显示字段。
+也就是最开始的表格列表里显示哪些列。
+
+@UI.identification
+这个控制 Object Page 明细页显示字段。
+它一般和 @UI.facet 配合使用。
+
+一个字段可以有多个 UI 注解
+举例：
+@UI.lineItem:       [{ position: 30, label: 'Requester' }]
+@UI.identification: [{ position: 30, label: 'Requester' }]
+@UI.selectionField: [{ position: 20 }]
+Requester;
+Requester 既显示在一览表
+也显示在明细页
+也作为查询条件
+
+
+
+```
+
+| 注解                   | 控制哪里    |
+| -------------------- | ------- |
+| `@UI.lineItem`       | 一览表列    |
+| `@UI.identification` | 明细页字段   |
+| `@UI.selectionField` | 查询条件    |
+| `@UI.facet`          | 明细页区块   |
+| `@UI.headerInfo`     | 明细页标题区域 |
+
 
 
 ## 第 7 步：创建 Service Definition
