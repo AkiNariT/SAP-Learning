@@ -300,105 +300,12 @@ expose ZC_RAP_CONS_REQ as ConsumableRequest;
 <br>
 后面 OData V4 里你会看到： `ConsumableRequest`<br>
 
----
-
-目前已经有的：
-```TEXT
-ZTRAP_CONS_REQ
-↓
-ZI_RAP_CONS_REQ
-↓
-ZI_RAP_CONS_REQ Behavior Definition
-↓
-ZC_RAP_CONS_REQ
-↓
-ZC_RAP_CONS_REQ Projection Behavior
-↓
-ZUI_RAP_CONS_REQ
-↓
-ZSD_RAP_CONS_REQ
-```
-
-## 追加Draft
-对于 Fiori Elements OData V4 UI 来说，新增/编辑通常走 Draft 模式：<br>
-```TEXT
-Create
-↓
-先生成 Draft 数据
-↓
-用户编辑
-↓
-Activate
-↓
-写入正式表
-```
-如果你想在 Fiori Elements Preview 里看到：Create等按钮，就要给RAP BO加Draft<br>
-修改ZI_RAP_CONS_REQ的Behavior。<br>
-
-```TEXT
-managed implementation in class zbp_i_rap_cons_req unique;
-strict ( 2 );
-with draft;
-
-define behavior for ZI_RAP_CONS_REQ alias ConsReq
-persistent table ztrap_cons_req
-draft table ztrap_cons_req_d
-lock master total etag LastChangedAt
-authorization master ( global )
-etag master LocalLastChangedAt
-{
-  create;
-  update;
-  delete;
-
-  draft action Edit;
-  draft action Activate optimized;
-  draft action Discard;
-  draft action Resume;
-  draft determine action Prepare;
-
-  field ( readonly, numbering : managed ) RequestID;
-
-  field ( readonly )
-    CreatedBy,
-    CreatedAt,
-    LastChangedBy,
-    LastChangedAt,
-    LocalLastChangedAt;
-
-  field ( mandatory )
-    RequestDate,
-    Requester,
-    ItemText,
-    Quantity,
-    UnitCode,
-    CostCenter,
-    Status;
-
-  mapping for ztrap_cons_req
-  {
-    RequestID            = request_id;
-    RequestDate          = request_date;
-    Requester            = requester;
-    ItemText             = item_text;
-    Quantity             = quantity;
-    UnitCode             = unit;
-    CostCenter           = cost_center;
-    Status               = status;
-    CreatedBy            = created_by;
-    CreatedAt            = created_at;
-    LastChangedBy        = last_changed_by;
-    LastChangedAt        = last_changed_at;
-    LocalLastChangedAt   = local_last_changed_at;
-  }
-}
-```
-此时还有error `draft table ztrap_cons_req_d`<br>
-因为缺少draft table。<br>
+虽然我们前部分都标记了Draft。<br>
+但是因为缺少draft table。<br>
 鼠标放在`draft table ztrap_cons_req_d` 按Ctrl+1创建。<br>
 <img width="837" height="762" alt="image" src="https://github.com/user-attachments/assets/e4c36799-de05-4208-aae2-e0dc3e0ffaeb" />
 
-[Draft table代码](./ZTRAP_CONS_REQ_D.js)
+[Draft table代码](./ZTRAP_CONS_REQ_D.cds)
 
 
 ## 第 8 步：创建 Service Binding
@@ -412,5 +319,98 @@ etag master LocalLastChangedAt
 <img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/5120c05c-b321-44ab-af71-08b624c1c200" />
 发布成功。<br>
 点击Preview。<br>
-可以看到：`Consumable Requests`<br>
+可以看到： Consumable Requests
 然后可以测试：Create,Edit,Delete<br>
+<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/b71a1170-4c72-4841-973f-1e2920a1a687" />
+成功！<br>
+<br>
+<br>
+
+## 结构总结
+
+```text
+ZRAP_LEARN_001
+  ↓
+ZTRAP_CONS_REQ              Database Table，正式数据表
+  ↓
+ZI_RAP_CONS_REQ             Interface Root View Entity，内部业务对象数据模型
+  ↓
+ZI_RAP_CONS_REQ Behavior    Interface Behavior，定义真实行为
+  ↓
+ZTRAP_CONS_REQ_D            Draft Table，草稿表
+  ↓
+ZBP_I_RAP_CONS_REQ          Behavior Implementation Class，ABAP 实现类
+  ↓
+ZC_RAP_CONS_REQ             Projection View，对外发布数据模型
+  ↓
+ZC_RAP_CONS_REQ Behavior    Projection Behavior，对外开放行为
+  ↓
+ZUI_RAP_CONS_REQ            Metadata Extension，Fiori UI 注解
+  ↓
+ZSD_RAP_CONS_REQ            Service Definition，服务定义
+  ↓
+ZSB_RAP_CONS_REQ            Service Binding，OData V4 UI 发布
+  ↓
+Fiori Elements Preview
+```
+
+ZTRAP_CONS_REQ 存数据<br>
+ZI_RAP_CONS_REQ 定义内部业务对象<br>
+Behavior 定义能做什么<br>
+ZC_RAP_CONS_REQ 对外暴露<br>
+ZUI_RAP_CONS_REQ 控制画面<br>
+Service Definition / Binding 发布成 OData<br>
+Fiori Elements 根据 Metadata 自动生成画面<br>
+
+
+---
+
+
+1.数据库层
+| 对象                 | 作用          |
+| ------------------ | ----------- |
+| `ZTRAP_CONS_REQ`   | 正式保存数据      |
+| `ZTRAP_CONS_REQ_D` | Draft 草稿数据表 |
+
+2.数据模型层<br>
+ZI_RAP_CONS_REQ 这是内部业务对象模型。<br>
+ZC_RAP_CONS_REQ 这是 Projection View，对外模型。<br>
+
+
+3.行为层 Behavior<br>
+ZI_RAP_CONS_REQ Behavior  核心行为定义。<br>
+| 代码                               | 含义                      |
+| -------------------------------- | ----------------------- |
+| `managed implementation`         | 使用 Managed RAP，框架处理基础保存 |
+| `with draft`                     | 启用 Draft                |
+| `persistent table`               | 正式数据表                   |
+| `draft table`                    | 草稿表                     |
+| `create/update/delete`           | 允许增删改                   |
+| `draft action Edit/Activate/...` | Draft 标准动作              |
+| `numbering : managed`            | 主键由 RAP 自动生成            |
+| `mapping`                        | CDS 字段和表字段对应            |
+
+ZC_RAP_CONS_REQ Behavior 它不是实现逻辑，而是对外开放行为。<br>
+
+
+4.实现类层<br>
+ZBP_I_RAP_CONS_REQ<br>
+这是 Behavior Implementation Class，也就是 ABAP 逻辑写在这里。<br>
+
+5.UI 层<br>
+ZUI_RAP_CONS_REQ 它不控制业务逻辑，只控制 Fiori Elements 画面。<br>
+| 注解                   | 控制位置             |
+| -------------------- | ---------------- |
+| `@UI.headerInfo`     | Object Page 顶部标题 |
+| `@UI.facet`          | Object Page 分组   |
+| `@UI.lineItem`       | List Report 表格列  |
+| `@UI.identification` | Object Page 明细字段 |
+| `@UI.selectionField` | 查询条件 Filter Bar  |
+
+
+6.服务层<br>
+ZSD_RAP_CONS_REQ<br>
+ZSB_RAP_CONS_REQ<br>
+
+
+
