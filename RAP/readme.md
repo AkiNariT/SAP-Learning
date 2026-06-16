@@ -33,7 +33,7 @@ Eclipse 会打开浏览器登录页面。<br>
 <img width="837" height="762" alt="image" src="https://github.com/user-attachments/assets/add2f9bd-56bb-47a5-bc30-731e2696936d" />
 <br>
 
- [代码](./Database_Table-ZTRAP_CONS_REQ.cds)
+ [代码](./Database_Table-ZTRAP_CONS_REQ.cds) <br>
 代码解释说明：
 ```CDS
 @EndUserText.label : （表头说明）
@@ -46,12 +46,12 @@ created_by : abp_creation_user; (RAP 可以自动写入当前用户。)
 created_at : abp_creation_tstmpl; (创建时间戳。)
 
 ```
-   | deliveryClass值    | 大致含义                   |
-   | ---- | ---------------------- |
-   | `#A` | Application table，业务数据 |
-   | `#C` | Customizing table，配置数据 |
-   | `#L` | 临时数据                   |
-   | `#G` | 客户表，客户维护数据             |
+| deliveryClass值    | 大致含义                   |
+| ---- | ---------------------- |
+| `#A` | Application table，业务数据 |
+| `#C` | Customizing table，配置数据 |
+| `#L` | 临时数据                   |
+| `#G` | 客户表，客户维护数据             |
 
 | dataMaintenance值              | 含义      |
 | -------------- | ------- |
@@ -65,7 +65,38 @@ created_at : abp_creation_tstmpl; (创建时间戳。)
 <img width="837" height="762" alt="image" src="https://github.com/user-attachments/assets/174f6c35-d718-4d7f-8afe-238596c8efac" />
 <img width="837" height="762" alt="image" src="https://github.com/user-attachments/assets/265e8113-418a-4c6e-b55e-bf61979e3436" />
 
-[代码](./ZI_RAP_CONS_REQ.js)
+[代码](./ZI_RAP_CONS_REQ.cds)<br>
+在 RAP 里，Data Definition 通常负责：
+```text
+1. 定义业务对象字段
+2. 给字段起业务名
+3. 定义字段语义
+4. 定义关联关系
+5. 给 Behavior Definition 提供基础
+6. 给 OData / Fiori 暴露数据结构
+```
+
+```CDS
+@EndUserText.label: （类说明）
+@AccessControl.authorizationCheck: （权限，看下表）
+@Metadata.ignorePropagatedAnnotations: （忽略从底层对象继承来的部分注解）
+
+@Semantics.user.createdBy: true (CreatedBy 是创建用户字段)
+@Semantics.systemDateTime.createdAt: true (CreatedAt 是创建时间戳)
+@Semantics.user.lastChangedBy: true (最后修改者)
+@Semantics.systemDateTime.lastChangedAt: true (最后修改时间)
+@Semantics.systemDateTime.localInstanceLastChangedAt: true (本地最后修改时间)
+
+```
+
+| 场景                          | 推荐                 |
+| --------------------------- | ------------------ |
+| 学习 / Demo / 临时验证            | `#NOT_REQUIRED`    |
+| 暴露真实业务数据，需要权限过滤             | `#CHECK`           |
+| 明确禁止 DCL 控制                 | `#NOT_ALLOWED`     |
+| 特殊底层 / privileged access 场景 | `#PRIVILEGED_ONLY` |
+
+
 
 
 ## 第 3 步：创建 Behavior Definition
