@@ -34,6 +34,30 @@ Eclipse 会打开浏览器登录页面。<br>
 <br>
 
  [代码](./Database_Table-ZTRAP_CONS_REQ.cds)
+代码解释说明：
+```CDS
+@EndUserText.label : （表头说明）
+@AbapCatalog.enhancement.category : （表示这个表是否允许增强）
+@AbapCatalog.tableCategory : （表示这是透明表）
+@AbapCatalog.deliveryClass : （这个是交付类。看下述deliveryClass值）
+@AbapCatalog.dataMaintenance : （表示这个表能不能通过维护工具直接维护数据，看下述dataMaintenance值）
+
+created_by : abp_creation_user; (RAP 可以自动写入当前用户。)
+created_at : abp_creation_tstmpl; (创建时间戳。)
+
+```
+   | deliveryClass值    | 大致含义                   |
+   | ---- | ---------------------- |
+   | `#A` | Application table，业务数据 |
+   | `#C` | Customizing table，配置数据 |
+   | `#L` | 临时数据                   |
+   | `#G` | 客户表，客户维护数据             |
+
+| dataMaintenance值              | 含义      |
+| -------------- | ------- |
+| `#ALLOWED`     | 允许维护    |
+| `#RESTRICTED`  | 受限制维护   |
+| `#NOT_ALLOWED` | 不允许直接维护 |
 
 
 ## 第 2 步：Interface Root View Entity：ZI_RAP_CONS_REQ
