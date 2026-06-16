@@ -33,7 +33,8 @@ Eclipse 会打开浏览器登录页面。<br>
 <img width="837" height="762" alt="image" src="https://github.com/user-attachments/assets/add2f9bd-56bb-47a5-bc30-731e2696936d" />
 <br>
 
- [代码](./Database_Table-ZTRAP_CONS_REQ.js)
+ [代码](./Database_Table-ZTRAP_CONS_REQ.cds)
+
 
 ## 第 2 步：Interface Root View Entity：ZI_RAP_CONS_REQ
 <img width="640" height="617" alt="image" src="https://github.com/user-attachments/assets/1226cc61-ee86-48a4-a4eb-2c0e8f2bd639" />
