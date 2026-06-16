@@ -63,3 +63,17 @@ ZC_RAP_CONS_REQ = 对外发布用视图<br>
 
 ## 第 5 步：创建 Projection Behavior
 找到 `ZC_RAP_CONS_REQ`，然后右键`New Behavior Definition`。
+
+<img width="632" height="210" alt="image" src="https://github.com/user-attachments/assets/18da2f72-c028-46d0-8649-5182ad693fe7" />
+含义:<br>
+底层有这些行为<br>
+我对外也开放这些行为<br>
+
+
+## 第 6 步：创建 ZUI_RAP_CONS_REQ
+
+
+
+
+
+
