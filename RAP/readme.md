@@ -110,7 +110,7 @@ created_at : abp_creation_tstmpl; (创建时间戳。)
 创建类 ZBP_I_RAP_CONS_REQ
 <img width="837" height="762" alt="image" src="https://github.com/user-attachments/assets/657bc1c1-432f-4c56-878d-6fd7cbed7f7f" />
 
-
+[代码](./ZBP_I_RAP_CONS_REQ.js)
 
 ## 第 4 步：创建 Projection View
 ZI_RAP_CONS_REQ = 内部业务对象视图<br>
