@@ -50,6 +50,11 @@ Eclipse 会打开浏览器登录页面。<br>
 
 [代码](./Behavior_Definition.js)
 
+创建类 ZBP_I_RAP_CONS_REQ
+<img width="837" height="762" alt="image" src="https://github.com/user-attachments/assets/657bc1c1-432f-4c56-878d-6fd7cbed7f7f" />
+
+
+
 ## 第 4 步：创建 Projection View
 ZI_RAP_CONS_REQ = 内部业务对象视图<br>
 ZC_RAP_CONS_REQ = 对外发布用视图<br>
@@ -125,6 +130,88 @@ ZUI_RAP_CONS_REQ
 ↓
 ZSD_RAP_CONS_REQ
 ```
+
+## 追加Draft
+对于 Fiori Elements OData V4 UI 来说，新增/编辑通常走 Draft 模式：<br>
+```TEXT
+Create
+↓
+先生成 Draft 数据
+↓
+用户编辑
+↓
+Activate
+↓
+写入正式表
+```
+如果你想在 Fiori Elements Preview 里看到：Create等按钮，就要给RAP BO加Draft<br>
+修改ZI_RAP_CONS_REQ的Behavior。<br>
+
+```TEXT
+managed implementation in class zbp_i_rap_cons_req unique;
+strict ( 2 );
+with draft;
+
+define behavior for ZI_RAP_CONS_REQ alias ConsReq
+persistent table ztrap_cons_req
+draft table ztrap_cons_req_d
+lock master total etag LastChangedAt
+authorization master ( global )
+etag master LocalLastChangedAt
+{
+  create;
+  update;
+  delete;
+
+  draft action Edit;
+  draft action Activate optimized;
+  draft action Discard;
+  draft action Resume;
+  draft determine action Prepare;
+
+  field ( readonly, numbering : managed ) RequestID;
+
+  field ( readonly )
+    CreatedBy,
+    CreatedAt,
+    LastChangedBy,
+    LastChangedAt,
+    LocalLastChangedAt;
+
+  field ( mandatory )
+    RequestDate,
+    Requester,
+    ItemText,
+    Quantity,
+    UnitCode,
+    CostCenter,
+    Status;
+
+  mapping for ztrap_cons_req
+  {
+    RequestID            = request_id;
+    RequestDate          = request_date;
+    Requester            = requester;
+    ItemText             = item_text;
+    Quantity             = quantity;
+    UnitCode             = unit;
+    CostCenter           = cost_center;
+    Status               = status;
+    CreatedBy            = created_by;
+    CreatedAt            = created_at;
+    LastChangedBy        = last_changed_by;
+    LastChangedAt        = last_changed_at;
+    LocalLastChangedAt   = local_last_changed_at;
+  }
+}
+```
+此时还有error `draft table ztrap_cons_req_d`<br>
+因为缺少draft table。<br>
+鼠标放在`draft table ztrap_cons_req_d` 按Ctrl+1创建。<br>
+<img width="837" height="762" alt="image" src="https://github.com/user-attachments/assets/e4c36799-de05-4208-aae2-e0dc3e0ffaeb" />
+
+[Draft table代码](./ZTRAP_CONS_REQ_D.js)
+
 
 ## 第 8 步：创建 Service Binding
 
