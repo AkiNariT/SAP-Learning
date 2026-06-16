@@ -1,4 +1,4 @@
-@EndUserText.label : 'RAP Consumable Request Table' //
+@EndUserText.label : 'RAP Consumable Request Table'
 @AbapCatalog.enhancement.category : #NOT_EXTENSIBLE
 @AbapCatalog.tableCategory : #TRANSPARENT
 @AbapCatalog.deliveryClass : #A
