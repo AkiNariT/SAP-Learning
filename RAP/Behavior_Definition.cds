@@ -1,15 +1,24 @@
 managed implementation in class zbp_i_rap_cons_req unique;
 strict ( 2 );
+with draft;
 
-define behavior for ZI_RAP_CONS_REQ //alias <alias_name>
+define behavior for ZI_RAP_CONS_REQ alias ConsReq
 persistent table ztrap_cons_req
-lock master
-authorization master ( instance )
-//etag master <field_name>
+draft table ztrap_cons_req_d
+lock master total etag LastChangedAt
+authorization master ( global )
+etag master LocalLastChangedAt
 {
-  create ( authorization : global );
+  create;
   update;
   delete;
+
+  draft action Edit;
+  draft action Activate optimized;
+  draft action Discard;
+  draft action Resume;
+  draft determine action Prepare;
+
   field ( readonly, numbering : managed ) RequestID;
 
   field ( readonly )
