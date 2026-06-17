@@ -23,6 +23,13 @@ Eclipse 会打开浏览器登录页面。<br>
 
 </details>
 
+---
+## RAP阶段 2
+优先从创建开发包开始学习。
+
+
+---
+
 ## 先创建开发包 Package
 <img width="640" height="617" alt="image" src="https://github.com/user-attachments/assets/29e87df1-6b58-4410-9d16-5161c8ba8c8c" />
 <img width="837" height="762" alt="image" src="https://github.com/user-attachments/assets/00e1007d-b5ce-4adf-ae18-a6c0c3cb3620" />
