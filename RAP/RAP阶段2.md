@@ -367,66 +367,95 @@ method submit的代码换成下述。
 ```js
 METHOD submit.
 
-  //核心代码
-  //读取当前被选中数据的 Status。
+  DATA has_valid_request TYPE abap_bool VALUE abap_false.
+
+  //这段是 RAP 里的 EML。
+  //READ ENTITIES 读取当前业务对象
+  //读取 RAP Business Object：ZI_RAP_CONS_REQ
   READ ENTITIES OF zi_rap_cons_req IN LOCAL MODE
     ENTITY ConsReq
+      //表示只读取 Status 字段。
       FIELDS ( Status )
-  //
+      //根据用户选中的 keys 去读取对应的数据
       WITH CORRESPONDING #( keys )
+    //把读取结果放到内部表：
     RESULT DATA(requests).
 
   LOOP AT requests ASSIGNING FIELD-SYMBOL(<request>).
-    //读取当前被选中数据的 Status。
+
     IF <request>-Status <> 'NEW'.
 
       APPEND VALUE #( %tky = <request>-%tky )
+        //failed-consreq 的作用是：告诉 RAP：这条记录处理失败
         TO failed-consreq.
 
       APPEND VALUE #(
+        //%tky 是RAP技术键
+        //在 Draft 场景下，业务主键不一定足够标识当前操作中的记录，所以 RAP 经常用 %tky 来准确定位当前对象。
         %tky = <request>-%tky
         %msg = new_message_with_text(
+                 //表示消息等级是错误。
+                 //常见还有：
+                 //severity-warning
+                 //severity-warning
+                 //severity-success
                  severity = if_abap_behv_message=>severity-error
                  text     = 'Only requests with status NEW can be submitted' )
         %element-Status = if_abap_behv=>mk-on
+      //reported-consreq 的作用是：把消息返回给 Fiori 画面
       ) TO reported-consreq.
+
+    ELSE.
+      //意思是这批数据里至少有一条可以处理
+      has_valid_request = abap_true.
+
+    RETURN.
 
     ENDIF.
 
   ENDLOOP.
 
-  MODIFY ENTITIES OF zi_rap_cons_req IN LOCAL MODE
-    ENTITY ConsReq
-      UPDATE FIELDS ( Status )
-      WITH VALUE #(
-        FOR request IN requests
-        //把错误消息返回给 Fiori 画面
-        WHERE ( Status = 'NEW' )
-        (
-          %tky   = request-%tky
-          //已经 SUBMITTED 的数据不会被再次处理。
-          Status = 'SUBMITTED'
+
+  IF has_valid_request = abap_true.
+
+    MODIFY ENTITIES OF zi_rap_cons_req IN LOCAL MODE
+      ENTITY ConsReq
+        UPDATE FIELDS ( Status )
+        WITH VALUE #(
+          FOR request IN requests
+          WHERE ( Status = 'NEW' )
+          (
+            %tky   = request-%tky
+            Status = 'SUBMITTED'
+          )
         )
+      FAILED DATA(modify_failed)
+      REPORTED DATA(modify_reported).
+
+    APPEND LINES OF modify_failed-consreq TO failed-consreq.
+    APPEND LINES OF modify_reported-consreq TO reported-consreq.
+
+    READ ENTITIES OF zi_rap_cons_req IN LOCAL MODE
+      ENTITY ConsReq
+        ALL FIELDS
+        WITH VALUE #(
+          FOR request IN requests
+          WHERE ( Status = 'NEW' )
+          (
+            %tky = request-%tky
+          )
+        )
+      RESULT DATA(updated_requests).
+
+    result = VALUE #(
+      FOR updated_request IN updated_requests
+      (
+        %tky   = updated_request-%tky
+        %param = updated_request
       )
-    //如果状态不是 NEW，就写入：
-    //告诉 RAP：这条数据处理失败
-    FAILED failed
-    //把错误消息返回给 Fiori 画面
-    REPORTED reported.
+    ).
 
-  READ ENTITIES OF zi_rap_cons_req IN LOCAL MODE
-    ENTITY ConsReq
-      ALL FIELDS
-      WITH CORRESPONDING #( keys )
-    RESULT DATA(updated_requests).
-
-  result = VALUE #(
-    FOR updated_request IN updated_requests
-    (
-      %tky   = updated_request-%tky
-      %param = updated_request
-    )
-  ).
+  ENDIF.
 
 ENDMETHOD.
 
