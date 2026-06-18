@@ -350,3 +350,91 @@ annotate entity ZC_RAP_CONS_REQ with
 
 
 </details>
+
+
+<details>
+  
+ <summary><h2>4.自定义 Action 追加error check</h2></summary>
+暂定check： <br>
+只有 Status = NEW 的数据可以 Submit。<br>
+如果已经是 SUBMITTED，再点 Submit 要报错。<br>
+
+1.先修改： `ZBP_I_RAP_CONS_REQ`
+
+method submit的代码换成下述。
+
+
+```js
+METHOD submit.
+
+  //核心代码
+  //读取当前被选中数据的 Status。
+  READ ENTITIES OF zi_rap_cons_req IN LOCAL MODE
+    ENTITY ConsReq
+      FIELDS ( Status )
+  //
+      WITH CORRESPONDING #( keys )
+    RESULT DATA(requests).
+
+  LOOP AT requests ASSIGNING FIELD-SYMBOL(<request>).
+    //读取当前被选中数据的 Status。
+    IF <request>-Status <> 'NEW'.
+
+      APPEND VALUE #( %tky = <request>-%tky )
+        TO failed-consreq.
+
+      APPEND VALUE #(
+        %tky = <request>-%tky
+        %msg = new_message_with_text(
+                 severity = if_abap_behv_message=>severity-error
+                 text     = 'Only requests with status NEW can be submitted' )
+        %element-Status = if_abap_behv=>mk-on
+      ) TO reported-consreq.
+
+    ENDIF.
+
+  ENDLOOP.
+
+  MODIFY ENTITIES OF zi_rap_cons_req IN LOCAL MODE
+    ENTITY ConsReq
+      UPDATE FIELDS ( Status )
+      WITH VALUE #(
+        FOR request IN requests
+        //把错误消息返回给 Fiori 画面
+        WHERE ( Status = 'NEW' )
+        (
+          %tky   = request-%tky
+          //已经 SUBMITTED 的数据不会被再次处理。
+          Status = 'SUBMITTED'
+        )
+      )
+    //如果状态不是 NEW，就写入：
+    //告诉 RAP：这条数据处理失败
+    FAILED failed
+    //把错误消息返回给 Fiori 画面
+    REPORTED reported.
+
+  READ ENTITIES OF zi_rap_cons_req IN LOCAL MODE
+    ENTITY ConsReq
+      ALL FIELDS
+      WITH CORRESPONDING #( keys )
+    RESULT DATA(updated_requests).
+
+  result = VALUE #(
+    FOR updated_request IN updated_requests
+    (
+      %tky   = updated_request-%tky
+      %param = updated_request
+    )
+  ).
+
+ENDMETHOD.
+
+```
+Action 内部也可以做业务校验。<br>
+
+
+
+
+
+</details>
