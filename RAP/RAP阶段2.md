@@ -760,7 +760,11 @@ define service ZSD_RAP_CONS_REQ {
   expose ZI_RAP_UNIT_VH as UnitValueHelp;
 }
 
-
 ```
+
+为什么要暴露？<br>
+因为 Fiori Elements 需要通过 OData 服务读取 Value Help 候选值。<br>
+
+
 
 </details>
