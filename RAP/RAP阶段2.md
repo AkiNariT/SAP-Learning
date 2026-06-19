@@ -1,5 +1,37 @@
 ## Behavior Implementation 业务逻辑
 
+常用的RAP技术字段表：
+
+| 技术字段           | 常见位置                                                              | 作用                                               | 你现在的例子                                        |
+| -------------- | ----------------------------------------------------------------- | ------------------------------------------------ | --------------------------------------------- |
+| `%tky`         | `READ ENTITIES` 结果、`failed`、`reported`、`result`、`MODIFY ENTITIES` | RAP 技术键，用来定位当前事务中的一条记录。Draft 场景下尤其重要。            | `%tky = request-%tky`                         |
+| `%key`         | 部分 EML 结果结构                                                       | 业务 key 结构，更接近 CDS 里的 key 字段。                     | 例如包含 `RequestID`                              |
+| `%is_draft`    | Draft 场景                                                          | 标识当前数据是否是 Draft。                                 | 判断草稿/正式数据                                     |
+| `%cid`         | `CREATE` 场景                                                       | 创建时的临时 correlation id，用来识别本次请求中新建的数据。            | Header/Item 深层创建常见                            |
+| `%cid_ref`     | `CREATE BY _association` 场景                                       | 引用上级或前一步创建数据的 `%cid`。                            | 创建 Header 后再创建 Item                           |
+| `%param`       | Action / Function result                                          | 放 Action 返回给前端的数据。                               | `%param = updated_request`                    |
+| `%msg`         | `reported-xxx`                                                    | 返回消息给 Fiori / OData 消费端。                         | `new_message_with_text( ... )`                |
+| `%element-字段名` | `reported-xxx`                                                    | 把消息绑定到某个字段上。                                     | `%element-Quantity = if_abap_behv=>mk-on`     |
+| `%action-动作名`  | `get_instance_features`                                           | 控制某个 action 按钮是否可用。                              | `%action-submit = if_abap_behv=>fc-o-enabled` |
+| `%field-字段名`   | `get_instance_features`                                           | 动态控制字段可编辑、只读等。                                   | `%field-CostCenter = ...`                     |
+| `%assoc-关联名`   | `get_instance_features`                                           | 动态控制某个 association / create-by-association 是否可用。 | `%assoc-_Item = ...`                          |
+| `%control-字段名` | `MODIFY ENTITIES` 输入                                              | 标记某个字段本次是否被传入/修改。                                | `%control-Status = if_abap_behv=>mk-on`       |
+| `%state_area`  | state message 场景                                                  | 给持久消息分区，用来清除或管理状态消息。                             | validation 持久消息会用                             |
+| `%path`        | 子节点消息 / composition 场景                                            | 指明消息属于哪条路径上的子对象。                                 | Header-Item 报错时常见                             |
+
+
+常用的6个变量：
+| 字段               | 必须掌握程度 | 简单理解            |
+| ---------------- | -----: | --------------- |
+| `%tky`           |     必须 | “是哪一条数据”        |
+| `%msg`           |     必须 | “返回什么消息”        |
+| `%element-字段名`   |     必须 | “消息标在哪个字段上”     |
+| `%action-submit` |     必须 | “Submit 按钮能不能点” |
+| `%param`         |     必须 | “Action 返回什么对象” |
+| `%control-字段名`   |    先知道 | “本次修改了哪个字段”     |
+
+
+
 <details>
   
  <summary><h2>1.默认值代入</h2></summary>
@@ -354,7 +386,7 @@ annotate entity ZC_RAP_CONS_REQ with
 
 <details>
   
- <summary><h2>4.自定义 Action 追加error check</h2></summary>
+ <summary><h2>4.自定义 Action 追加 Error check</h2></summary>
 暂定check： <br>
 只有 Status = NEW 的数据可以 Submit。<br>
 如果已经是 SUBMITTED，再点 Submit 要报错。<br>
@@ -469,5 +501,161 @@ Action 内部也可以做业务校验。<br>
 | `action` 内校验 | 用户点击某个业务按钮时检查 |
 
 
+</details>
+
+
+<details>
+ <summary><h2>5.Instance Feature：根据每条数据状态，动态控制按钮是否可用。</h2></summary>
+
+举例：
+```text
+Status = NEW        → Submit 按钮可点
+Status = SUBMITTED  → Submit 按钮不可点
+```
+
+第 1 步：修改 Interface Behavior <br>
+修改`ZI_RAP_CONS_REQ`。<br>
+
+```CDS
+...
+  determination setDefaultValues on modify { create; }
+  validation checkQuantity on save { create; update; field Quantity; }
+  //旧代码
+  //action submit result [1] $self;
+  action ( features : instance ) submit result [0..1] $self;
+...
+```
+
+新加部分`features : instance`<br>
+含义：这个 action 的可用性，由每一条实例数据自己决定。<br>
+
+第 2 步：新方法 get_instance_features
+
+修改`ZBP_I_RAP_CONS_REQ`
+```js
+METHODS get_instance_features
+  FOR INSTANCE FEATURES
+  IMPORTING keys REQUEST requested_features FOR ConsReq RESULT result.
+
+```
+
+实现`get_instance_features`
+
+```js
+METHOD get_instance_features.
+  //515-517行含义位读取当前行的Status。
+  READ ENTITIES OF zi_rap_cons_req IN LOCAL MODE
+    ENTITY ConsReq
+      FIELDS ( Status )
+      WITH CORRESPONDING #( keys )
+    RESULT DATA(requests).
+
+  result = VALUE #(
+    FOR request IN requests
+    (
+      %tky = request-%tky
+      %action-submit = COND #(
+        //如果 Status = NEW
+        WHEN request-Status = 'NEW'
+        //Submit 按钮可用
+        THEN if_abap_behv=>fc-o-enabled
+        //Submit 按钮禁用
+        ELSE if_abap_behv=>fc-o-disabled
+      )
+    )
+  ).
+
+ENDMETHOD.
+```
 
 </details>
+
+
+<details>
+  
+ <summary><h2>6.动态字段控制：提交后不允许再改字段。</h2></summary>
+设计：
+
+```text
+Status = NEW        → 字段可以编辑
+Status = SUBMITTED  → 字段变成只读
+```
+
+先修改`ZI_RAP_CONS_REQ Behavior Definition`<br>
+添加代码<br>
+
+```cds
+field ( features : instance )
+  Requester,
+  ItemText,
+  Quantity,
+  UnitCode,
+  CostCenter;
+```
+
+需要修改`ZBP_I_RAP_CONS_REQ`
+
+```js
+METHOD get_instance_features.
+
+  READ ENTITIES OF zi_rap_cons_req IN LOCAL MODE
+    ENTITY ConsReq
+      FIELDS ( Status )
+      WITH CORRESPONDING #( keys )
+    RESULT DATA(requests).
+
+  result = VALUE #(
+    FOR request IN requests
+    (
+      %tky = request-%tky
+
+      %action-submit = COND #(
+        WHEN request-Status = 'NEW'
+        THEN if_abap_behv=>fc-o-enabled  //操作可用
+        ELSE if_abap_behv=>fc-o-disabled //操作不可用
+      )
+      //下述代码是本次追加的
+      %field-Requester = COND #(
+        WHEN request-Status = 'NEW'
+        THEN if_abap_behv=>fc-f-unrestricted  //字段不限制，允许编辑
+        ELSE if_abap_behv=>fc-f-read_only     //字段只读
+      )
+
+      %field-ItemText = COND #(
+        WHEN request-Status = 'NEW'
+        THEN if_abap_behv=>fc-f-unrestricted  
+        ELSE if_abap_behv=>fc-f-read_only
+      )
+
+      %field-Quantity = COND #(
+        WHEN request-Status = 'NEW'
+        THEN if_abap_behv=>fc-f-unrestricted
+        ELSE if_abap_behv=>fc-f-read_only
+      )
+
+      %field-UnitCode = COND #(
+        WHEN request-Status = 'NEW'
+        THEN if_abap_behv=>fc-f-unrestricted
+        ELSE if_abap_behv=>fc-f-read_only
+      )
+
+      %field-CostCenter = COND #(
+        WHEN request-Status = 'NEW'
+        THEN if_abap_behv=>fc-f-unrestricted
+        ELSE if_abap_behv=>fc-f-read_only
+      )
+    )
+  ).
+
+ENDMETHOD.
+```
+
+RAP 根据字段名自动生成 feature 控制字段：
+```text
+%field-Requester
+%field-ItemText
+%field-Quantity
+%field-UnitCode
+%field-CostCenter
+
+```
