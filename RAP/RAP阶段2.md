@@ -658,3 +658,31 @@ RAP 根据字段名自动生成 feature 控制字段：
 %field-UnitCode
 %field-CostCenter
 ```
+</details>
+
+<details>
+  
+ <summary><h2>7.Side Effects</h2></summary>
+
+Side Effects 不是业务逻辑。它本身不修改数据。<br>
+它的作用是告诉 Fiori Elements：局部重新取数 / 重新计算 UI 状态,不是整个浏览器刷新。<br>
+
+第 1 步：修改 `ZI_RAP_CONS_REQ`
+
+```cds
+
+  draft action Activate optimized;
+  draft action Discard;
+  draft action Resume;
+  draft determine action Prepare;
+
+  determination setDefaultValues on modify { create; }
+  validation checkQuantity on save { create; update; field Quantity; }
+  action ( features : instance ) submit result [0..1] $self;
+
+  side effects { action submit affects $self; }
+
+```
+
+</details>
+
