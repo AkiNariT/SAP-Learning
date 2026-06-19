@@ -799,6 +799,6 @@ define root view entity ZI_RAP_CONS_REQ
 
 ```
 
-
+第 2 步：修改 ZC_RAP_CONS_REQ
 
 </details>
