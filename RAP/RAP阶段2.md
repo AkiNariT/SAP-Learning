@@ -690,6 +690,64 @@ Side Effects 不是业务逻辑。它本身不修改数据。<br>
 <details>
   
  <summary><h2>8.Value Help：给字段做搜索帮助 / 下拉选择。</h2></summary>
+设计。给 UnitCode 做自建 Value Help。用户可以从候选里选。<br>
+现在的 UnitCode 是手动输入：<br>
+
+
+第 1 步：创建单位 Value Help 表
+
+创建 Database Table：`ZTRAP_UNIT_VH`
+<img width="837" height="762" alt="image" src="https://github.com/user-attachments/assets/a86d575f-fe9a-4457-8dfa-1c97154eb6be" />
+<img width="611" height="265" alt="image" src="https://github.com/user-attachments/assets/83199352-30c4-4229-b707-11d6d0355599" />
+
+第 2 步：创建 Value Help CDS View
+<img width="837" height="762" alt="image" src="https://github.com/user-attachments/assets/7ecbab0b-e559-45aa-83e8-7103782f0001" />
+<img width="615" height="227" alt="image" src="https://github.com/user-attachments/assets/86885e43-1fa9-4e26-a11b-db4b25853a02" />
+
+第 3 步：准备测试数据
+创建 Class：ZCL_RAP_FILL_VH_DATA
+<img width="837" height="762" alt="image" src="https://github.com/user-attachments/assets/2d0846dc-b61c-444d-9377-d2ec09351b13" />
+
+```js
+CLASS zcl_rap_fill_vh_data DEFINITION
+  PUBLIC
+  FINAL
+  CREATE PUBLIC.
+
+  PUBLIC SECTION.
+    INTERFACES if_oo_adt_classrun.
+
+ENDCLASS.
+
+CLASS zcl_rap_fill_vh_data IMPLEMENTATION.
+
+  METHOD if_oo_adt_classrun~main.
+
+    DELETE FROM ztrap_unit_vh.
+
+    INSERT ztrap_unit_vh FROM TABLE @(
+      VALUE #(
+        ( client = sy-mandt unit_code = 'EA' unit_text = 'Each' )
+        ( client = sy-mandt unit_code = 'PC' unit_text = 'Piece' )
+        ( client = sy-mandt unit_code = 'KG' unit_text = 'Kilogram' )
+        ( client = sy-mandt unit_code = 'L'  unit_text = 'Liter' )
+        ( client = sy-mandt unit_code = 'M'  unit_text = 'Meter' )
+      )
+    ).
+
+    COMMIT WORK.
+
+    out->write( 'Unit value help data created.' ).
+
+  ENDMETHOD.
+
+ENDCLASS.
+```
+
+
+第 4 步：给 UnitCode 加 Value Help 注解
+找到 ZC_RAP_CONS_REQ 的 Data Definitions 开始修改。<br>
+<img width="632" height="727" alt="image" src="https://github.com/user-attachments/assets/81eb2cfa-dba1-428f-b08e-83ee24edb634" />
 
 
 </details>
