@@ -779,7 +779,6 @@ define service ZSD_RAP_CONS_REQ {
 @Metadata.ignorePropagatedAnnotations: true
 define root view entity ZI_RAP_CONS_REQ 
   as select from ztrap_cons_req
-
   //本次追加代码
   association [0..1] to ZI_RAP_UNIT_VH as _Unit
     on $projection.UnitCode = _Unit.UnitCode
