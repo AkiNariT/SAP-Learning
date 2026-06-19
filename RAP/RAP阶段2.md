@@ -657,5 +657,4 @@ RAP 根据字段名自动生成 feature 控制字段：
 %field-Quantity
 %field-UnitCode
 %field-CostCenter
-
 ```
