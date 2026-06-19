@@ -749,5 +749,18 @@ ENDCLASS.
 找到 ZC_RAP_CONS_REQ 的 Data Definitions 开始修改。<br>
 <img width="632" height="727" alt="image" src="https://github.com/user-attachments/assets/81eb2cfa-dba1-428f-b08e-83ee24edb634" />
 
+第 5 步：Service Definition 里也暴露 Value Help
+修改`ZSD_RAP_CONS_REQ`。
+```cds
+@EndUserText.label: 'Consumable Request Service Definition'
+define service ZSD_RAP_CONS_REQ {
+  expose ZC_RAP_CONS_REQ as ConsumableRequest;
+
+  //追加代码
+  expose ZI_RAP_UNIT_VH as UnitValueHelp;
+}
+
+
+```
 
 </details>
