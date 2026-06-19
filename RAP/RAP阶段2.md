@@ -765,6 +765,11 @@ define service ZSD_RAP_CONS_REQ {
 为什么要暴露？<br>
 因为 Fiori Elements 需要通过 OData 服务读取 Value Help 候选值。<br>
 
+</details>
+
+<details>
+  
+ <summary><h2>9.Association：关联其他 CDS / 主数据</h2></summary>
 
 
 </details>
