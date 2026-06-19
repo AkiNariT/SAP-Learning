@@ -771,5 +771,35 @@ define service ZSD_RAP_CONS_REQ {
   
  <summary><h2>9.Association：关联其他 CDS / 主数据</h2></summary>
 
+第 1 步：修改 ZI_RAP_CONS_REQ
+先修改：ZI_RAP_CONS_REQ
+```CDS
+@AccessControl.authorizationCheck: #NOT_REQUIRED
+@EndUserText.label: 'RAP Consumable Request Interface View'
+@Metadata.ignorePropagatedAnnotations: true
+define root view entity ZI_RAP_CONS_REQ 
+  as select from ztrap_cons_req
+
+  //本次追加代码
+  association [0..1] to ZI_RAP_UNIT_VH as _Unit
+    on $projection.UnitCode = _Unit.UnitCode
+{
+    
+  key request_id as RequestID,
+
+      request_date as RequestDate,
+      requester    as Requester,
+      item_text    as ItemText,
+
+      quantity     as Quantity,
+      unit         as UnitCode,
+
+      //本次追加代码
+      _Unit.UnitText as UnitText,
+  ......
+
+```
+
+
 
 </details>
