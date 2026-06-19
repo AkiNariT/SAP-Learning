@@ -686,3 +686,10 @@ Side Effects 不是业务逻辑。它本身不修改数据。<br>
 
 </details>
 
+
+<details>
+  
+ <summary><h2>8.Value Help：给字段做搜索帮助 / 下拉选择。</h2></summary>
+
+
+</details>
