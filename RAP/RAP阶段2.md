@@ -769,7 +769,7 @@ define service ZSD_RAP_CONS_REQ {
 
 <details>
   
- <summary><h2>9.Association：关联其他 CDS / 主数据</h2></summary>
+ <summary><h2>9.Association：关联其他 CDS / 主数据  (已经关联到OData)</h2></summary>
 做数据关联，例如 UnitCode = EA 
 我们要做成在选择 UnitCode = EA 时自动带出他的 UnitText 。
 
