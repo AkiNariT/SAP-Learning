@@ -917,7 +917,31 @@ $top=5<br>
 
 <details>
   
- <summary><h2>10.Association深入第一回：Association 到底和 Join 有什么区别</h2></summary>
+ <summary><h2>10.Association深入讲解(一)：Association 到底和 Join 有什么区别</h2></summary>
+
+<img width="702" height="587" alt="image" src="https://github.com/user-attachments/assets/a3acf3b4-fc74-444c-bf3d-cf38c8738ca5" />
+
+该状态说明RAP OData服务器里已经有了一个导航关系：<br>
+ConsumableRequest → _Unit → UnitValueHelp<br>
+
+<img width="641" height="321" alt="image" src="https://github.com/user-attachments/assets/370f7467-0440-4c65-9a35-5e600a28cb66" />
+
+含义是：每一条 ConsumableRequest，根据 UnitCode，最多能找到一条 UnitValueHelp。<br>
+所以 _Unit 本身不是字段，它是通往另一个实体的路径。<br>
+
+Association 和 Join 的核心区别：<br>
+Join 是“马上拼表”。<br>
+  
+Association 是“先定义关系，不一定马上取”<br>
+Association 是：ConsumableRequest 可以通过 _Unit 找到 UnitValueHelp。<br>
+平时只查：ConsumableRequest。<br>
+它不一定马上去取 _Unit。只有你明确要求：$expand=_Unit。<br>
+它才把 _Unit 展开出来。<br>
+
+
+
+### 3. 为什么 Association 更适合 OData？
+
 
 
 
