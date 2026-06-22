@@ -691,7 +691,7 @@ Side Effects 不是业务逻辑。它本身不修改数据。<br>
   
  <summary><h2>8.Value Help：给字段做搜索帮助 / 下拉选择。</h2></summary>
 设计。给 UnitCode 做自建 Value Help。用户可以从候选里选。<br>
-现在的 UnitCode 是手动输入：<br>
+现在的 UnitCode 是手动输入。<br>
 
 
 第 1 步：创建单位 Value Help 表
@@ -770,6 +770,17 @@ define service ZSD_RAP_CONS_REQ {
 <details>
   
  <summary><h2>9.Association：关联其他 CDS / 主数据</h2></summary>
+做数据关联，例如 UnitCode = EA 
+我们要做成在选择 UnitCode = EA 时自动带出他的 UnitText 。
+
+前提住准备：<br>
+```text
+ZTRAP_UNIT_VH      单位表
+ZI_RAP_UNIT_VH     单位 CDS View
+```
+
+<img width="496" height="280" alt="image" src="https://github.com/user-attachments/assets/5a8ae8be-2281-44b3-8d9a-6a10cde5d8f6" />
+
 
 第 1 步：修改 ZI_RAP_CONS_REQ
 先修改：ZI_RAP_CONS_REQ
@@ -793,12 +804,111 @@ define root view entity ZI_RAP_CONS_REQ
       quantity     as Quantity,
       unit         as UnitCode,
 
+      cost_center  as CostCenter,
+      status       as Status,
+
+      @Semantics.user.createdBy: true
+      created_by as CreatedBy,
+
+      @Semantics.systemDateTime.createdAt: true
+      created_at as CreatedAt,
+
+      @Semantics.user.lastChangedBy: true
+      last_changed_by as LastChangedBy,
+
+      @Semantics.systemDateTime.lastChangedAt: true
+      last_changed_at as LastChangedAt,
+
+      @Semantics.systemDateTime.localInstanceLastChangedAt: true
+      local_last_changed_at as LocalLastChangedAt,
       //本次追加代码
-      _Unit.UnitText as UnitText,
-  ......
+      _Unit
+}
+
 
 ```
 
 第 2 步：修改 ZC_RAP_CONS_REQ
+```CDS
+@AccessControl.authorizationCheck: #NOT_REQUIRED
+@EndUserText.label: 'RAP Consumable Request Projection View'
+@Metadata.ignorePropagatedAnnotations: true
+@Metadata.allowExtensions: true
+define root view entity ZC_RAP_CONS_REQ 
+    provider contract transactional_query
+    as projection on ZI_RAP_CONS_REQ
+{
+  key RequestID,
 
+      RequestDate,
+      Requester,
+      ItemText,
+
+      Quantity,
+      //本次追加
+      @Consumption.valueHelpDefinition: [
+        {
+          entity: {
+            name: 'ZI_RAP_UNIT_VH',
+            element: 'UnitCode'
+          }
+        }
+      ]
+      UnitCode,
+
+      CostCenter,
+      Status,
+
+      CreatedBy,
+      CreatedAt,
+      LastChangedBy,
+      LastChangedAt,
+      LocalLastChangedAt,
+      //本次追加代码
+      _Unit
+}
+
+```
+
+第 3 步：修改Behavior Definition： ZI_RAP_CONS_REQ
+UnitText，建议把它放到 readonly 里。
+```CDS
+...
+field ( readonly )
+  RequestDate,
+  Status,
+  //本次追加
+  UnitText,
+  CreatedBy,
+  CreatedAt,
+  LastChangedBy,
+  LastChangedAt,
+  LocalLastChangedAt;
+...
+
+```
+
+<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/0a34400a-4e81-47f9-8ca8-a876eaee29c4" />
+<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/e68e52c3-7be3-4171-b83e-b6c9c36ccee3" />
+<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/8a3e7ea1-8af0-464b-9a26-072d841a7bca" />
+<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/fbc87dbd-3934-43fb-b6cb-9c2711b2286d" />
+<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/b47b0220-99e9-40e6-b116-4490227a8777" />
+<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/b2de4d5a-75fb-4014-a533-481dbca3e6e3" />
+
+
+http code是200。证明请求成功。<br>
+
+
+$top=5<br>
+再Odata中意思取得前多少数据。<br>
+
+再JSON文件中我们看见类似下述，证明取得成功。<br>
+```JSON
+"UnitCode": "EA",
+"_Unit": {
+  "UnitCode": "EA",
+  "UnitText": "Each"
+}
+
+```
 </details>
