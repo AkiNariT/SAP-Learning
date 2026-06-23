@@ -1028,4 +1028,46 @@ define table ztrap_cons_item {
 }
 ```
 
+## 第 2 步：创建 Item的Interface CDS : View ZI_RAP_CONS_ITEM
+
+新建 Data Definition :ZI_RAP_CONS_ITEM
+<img width="837" height="762" alt="image" src="https://github.com/user-attachments/assets/0bb2c2a2-b56c-4f2d-9cfd-69af7ddd6c90" />
+```cds
+@EndUserText.label: 'RAP Consumable Request Item Interface View'
+@AccessControl.authorizationCheck: #NOT_REQUIRED
+define view entity ZI_RAP_CONS_ITEM
+  as select from ztrap_cons_item
+  association to parent ZI_RAP_CONS_REQ as _Request
+    on $projection.RequestID = _Request.RequestID
+{
+  key item_uuid  as ItemUUID,
+
+      request_id as RequestID,
+      item_no    as ItemNo,
+      item_text  as ItemText,
+
+      unit_code  as UnitCode,
+      quantity   as Quantity,
+
+      @Semantics.user.createdBy: true
+      created_by as CreatedBy,
+
+      @Semantics.systemDateTime.createdAt: true
+      created_at as CreatedAt,
+
+      @Semantics.user.lastChangedBy: true
+      last_changed_by as LastChangedBy,
+
+      @Semantics.systemDateTime.lastChangedAt: true
+      last_changed_at as LastChangedAt,
+
+      @Semantics.systemDateTime.localInstanceLastChangedAt: true
+      local_last_changed_at as LocalLastChangedAt,
+
+      _Request
+}
+
+```
+
+
 </details>
