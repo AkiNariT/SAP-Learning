@@ -1028,6 +1028,36 @@ define table ztrap_cons_item {
 }
 ```
 
+### 创建 Draft Table
+<img width="837" height="762" alt="image" src="https://github.com/user-attachments/assets/0dc4c57b-5f76-4d76-90e9-13c2d17414c6" />
+
+```cds
+@EndUserText.label : 'Draft table for entity ZTRAP_CONS_ITEM'
+@AbapCatalog.enhancement.category : #NOT_EXTENSIBLE
+@AbapCatalog.tableCategory : #TRANSPARENT
+@AbapCatalog.deliveryClass : #A
+@AbapCatalog.dataMaintenance : #RESTRICTED
+define table ztrap_cons_ite_d {
+
+  key client         : abap.clnt not null;
+  key itemuuid       : sysuuid_x16 not null;
+  requestid          : sysuuid_x16 not null;
+  itemno             : abap.numc(6);
+  itemtext           : abap.char(80);
+  unitcode           : abap.unit(3);
+  @Semantics.quantity.unitOfMeasure : 'ztrap_cons_ite_d.unitcode'
+  quantity           : abap.quan(13,3);
+  createdby          : abp_creation_user;
+  createdat          : abp_creation_tstmpl;
+  lastchangedby      : abp_lastchange_user;
+  lastchangedat      : abp_lastchange_tstmpl;
+  locallastchangedat : abp_locinst_lastchange_tstmpl;
+  "%admin"           : include sych_bdl_draft_admin_inc;
+
+}
+```
+
+
 ## 第 2 步：创建 Item的Interface CDS : View ZI_RAP_CONS_ITEM
 
 新建 Data Definition :ZI_RAP_CONS_ITEM
