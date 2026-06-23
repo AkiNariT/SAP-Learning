@@ -1116,7 +1116,15 @@ define root view entity ZI_RAP_CONS_REQ
 
 ```
 
+## 第 3 步：让 RAP runtime 认识 Header-Item 关系。
+现在已经追加的东西。
+```text
+ZTRAP_CONS_ITEM        Item 数据库表
+ZI_RAP_CONS_ITEM       Item Interface View
+ZI_RAP_CONS_REQ        Header 里追加 composition _Items
+```
 
+本次修改 Behavior Definition : ZI_RAP_CONS_REQ<br>
 
 
 </details>
