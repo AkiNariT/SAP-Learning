@@ -926,6 +926,16 @@ ConsumableRequest → _Unit → UnitValueHelp<br>
 
 <img width="641" height="321" alt="image" src="https://github.com/user-attachments/assets/370f7467-0440-4c65-9a35-5e600a28cb66" />
 
+| 写法       | 含义         | 典型例子           |
+| -------- | ---------- | -------------- |
+| `[0..1]` | 可能没有，最多一条  | 申请 → 单位说明      |
+| `[1..1]` | 必须有，且只有一条  | Item → Header  |
+| `[0..*]` | 可能没有，也可能多条 | Header → Items |
+| `[1..*]` | 至少一条，可能多条  | 理论可用，但项目里谨慎    |
+
+
+
+
 含义是：每一条 ConsumableRequest，根据 UnitCode，最多能找到一条 UnitValueHelp。<br>
 所以 _Unit 本身不是字段，它是通往另一个实体的路径。<br>
 
@@ -938,12 +948,46 @@ Association 是：ConsumableRequest 可以通过 _Unit 找到 UnitValueHelp。<b
 它不一定马上去取 _Unit。只有你明确要求：$expand=_Unit。<br>
 它才把 _Unit 展开出来。<br>
 
+</details>
 
 
-### 3. 为什么 Association 更适合 OData？
+<details>
+  
+ <summary><h2>11.Composition</h2></summary>
+
+注意：因为 Composition 会改动对象结构，记得保存。
 
 
 
+## Association 和 Composition 的区别
+| 项目      | Association | Composition |
+| ------- | ----------- | ----------- |
+| 关系强度    | 普通关联        | 父子从属        |
+| 例子      | 申请 → 单位说明   | 申请头 → 申请明细  |
+| 生命周期    | 各自独立        | 子对象依附父对象    |
+| 删除父对象   | 不一定影响目标对象   | 子对象通常一起处理   |
+| RAP 重要性 | 数据导航        | 业务对象建模核心    |
 
+
+这一阶段我们会做什么：
+```text
+ConsumableRequest
+  └─ Items
+```
+
+目标结构：
+```text
+ZTRAP_CONS_REQ       Header 表
+ZTRAP_CONS_ITEM      Item 表
+
+ZI_RAP_CONS_REQ      Header Root View
+ZI_RAP_CONS_ITEM     Item Child View
+
+ZC_RAP_CONS_REQ      Header Projection
+ZC_RAP_CONS_ITEM     Item Projection
+
+Behavior Definition 里追加：
+composition [0..*] of ZI_RAP_CONS_ITEM as _Items
+```
 
 </details>
