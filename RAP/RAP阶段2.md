@@ -1306,4 +1306,17 @@ define view entity ZC_RAP_CONS_ITEM
 
 ```
 
+## 第 4 步：修改 ZC_RAP_CONS_REQ
+```cds
+      ...
+      CreatedBy,
+      CreatedAt,
+      LastChangedBy,
+      LastChangedAt,
+      LocalLastChangedAt,
+      
+      _Unit,
+      //本次追加的代码
+      _Items : redirected to composition child ZC_RAP_CONS_ITEM
+```
 </details>
