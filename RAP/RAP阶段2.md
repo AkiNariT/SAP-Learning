@@ -990,4 +990,42 @@ Behavior Definition 里追加：
 composition [0..*] of ZI_RAP_CONS_ITEM as _Items
 ```
 
+## 第 1 步：创建 Item 明细表。<br>
+已有 Header 表：ZTRAP_CONS_REQ<br>
+新增 Item 表：ZTRAP_CONS_ITEM<br>
+
+以后结构会变成：
+```text
+Consumable Request Header
+  └─ Consumable Request Items
+```
+即一张申请 Header，可以有多条申请明细 Item。
+
+### 创建 Database Table
+<img width="837" height="762" alt="image" src="https://github.com/user-attachments/assets/0d8cd24a-c399-420c-b35c-958821d4ac9d" />
+
+```CDS
+@EndUserText.label : 'RAP Consumable Request Item Table'
+@AbapCatalog.enhancement.category : #NOT_EXTENSIBLE
+@AbapCatalog.tableCategory : #TRANSPARENT
+@AbapCatalog.deliveryClass : #A
+@AbapCatalog.dataMaintenance : #RESTRICTED
+define table ztrap_cons_item {
+
+  key client            : abap.clnt not null;
+  key item_uuid         : sysuuid_x16 not null;
+  request_id            : sysuuid_x16 not null;
+  item_no               : abap.numc(6);
+  item_text             : abap.char(80);
+  unit_code             : abap.char(3);
+  quantity              : abap.dec(13,3);
+  created_by            : abp_creation_user;
+  created_at            : abp_creation_tstmpl;
+  last_changed_by       : abp_lastchange_user;
+  last_changed_at       : abp_lastchange_tstmpl;
+  local_last_changed_at : abp_locinst_lastchange_tstmpl;
+
+}
+```
+
 </details>
