@@ -1358,4 +1358,22 @@ define behavior for ZC_RAP_CONS_ITEM alias ConsItem
 
 ```
 
+Projection Behavior 是把这些能力开放到消费层：
+```text
+ZC_RAP_CONS_REQ      Fiori / OData 用的 Header
+ZC_RAP_CONS_ITEM     Fiori / OData 用的 Item
+```
+
+## 第 7 步：下一步改 Service Definition：ZSD_RAP_CONS_REQ。
+```cds
+@EndUserText.label: 'Consumable Request Service Definition'
+define service ZSD_RAP_CONS_REQ {
+  expose ZC_RAP_CONS_REQ  as ConsumableRequest;
+  //本次追加
+  expose ZC_RAP_CONS_ITEM as ConsumableRequestItem;
+  expose ZI_RAP_UNIT_VH   as UnitValueHelp;
+}
+```
+
+
 </details>
