@@ -1306,7 +1306,7 @@ define view entity ZC_RAP_CONS_ITEM
 
 ```
 
-## 第 4 步：修改 ZC_RAP_CONS_REQ
+## 第 5 步：修改 ZC_RAP_CONS_REQ
 ```cds
       ...
       CreatedBy,
@@ -1319,4 +1319,43 @@ define view entity ZC_RAP_CONS_ITEM
       //本次追加的代码
       _Items : redirected to composition child ZC_RAP_CONS_ITEM
 ```
+
+## 第 6 步：修改 ZC_RAP_CONS_REQ Behavior Definition
+改成 Header + Item 两段
+
+```cds
+projection;
+strict ( 2 );
+use draft;
+
+define behavior for ZC_RAP_CONS_REQ alias ConsReq
+{
+  use create;
+  use update;
+  use delete;
+  //本次追加
+  use association _Items { create; with draft; }
+
+  use action Edit;
+  use action Activate;
+  use action Discard;
+  use action Resume;
+  use action Prepare;
+
+  use action submit;
+}
+
+//本次追加
+define behavior for ZC_RAP_CONS_ITEM alias ConsItem
+{
+  use update;
+  use delete;
+
+  use association _Request { with draft; }
+}
+
+
+
+```
+
 </details>
