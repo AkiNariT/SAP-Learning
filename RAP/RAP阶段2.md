@@ -1070,5 +1070,53 @@ define view entity ZI_RAP_CONS_ITEM
 ```
 
 ## 第 3 步：在Header的 ZI_RAP_CONS_REQ 里追加 Composition _Items。
+```cds
+@AccessControl.authorizationCheck: #NOT_REQUIRED
+@EndUserText.label: 'RAP Consumable Request Interface View'
+@Metadata.ignorePropagatedAnnotations: true
+define root view entity ZI_RAP_CONS_REQ 
+  as select from ztrap_cons_req
+  //本次追加代码
+  composition [0..*] of ZI_RAP_CONS_ITEM as _Items
+  association [0..1] to ZI_RAP_UNIT_VH as _Unit
+    on $projection.UnitCode = _Unit.UnitCode
+{
+    
+  key request_id as RequestID,
+
+      request_date as RequestDate,
+      requester    as Requester,
+      item_text    as ItemText,
+
+      quantity     as Quantity,
+      unit         as UnitCode,
+
+      cost_center  as CostCenter,
+      status       as Status,
+
+      @Semantics.user.createdBy: true
+      created_by as CreatedBy,
+
+      @Semantics.systemDateTime.createdAt: true
+      created_at as CreatedAt,
+
+      @Semantics.user.lastChangedBy: true
+      last_changed_by as LastChangedBy,
+
+      @Semantics.systemDateTime.lastChangedAt: true
+      last_changed_at as LastChangedAt,
+
+      @Semantics.systemDateTime.localInstanceLastChangedAt: true
+      local_last_changed_at as LocalLastChangedAt,
+
+      _Unit,
+      //本次追加代码
+      _Items
+}
+
+```
+
+
+
 
 </details>
