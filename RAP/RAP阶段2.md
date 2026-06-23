@@ -1069,5 +1069,6 @@ define view entity ZI_RAP_CONS_ITEM
 
 ```
 
+## 第 3 步：在Header的 ZI_RAP_CONS_REQ 里追加 Composition _Items。
 
 </details>
