@@ -1156,5 +1156,154 @@ ZI_RAP_CONS_REQ        Header 里追加 composition _Items
 
 本次修改 Behavior Definition : ZI_RAP_CONS_REQ<br>
 
+```cds
+managed implementation in class zbp_i_rap_cons_req unique;
+strict ( 2 );
+with draft;
+
+define behavior for ZI_RAP_CONS_REQ alias ConsReq
+persistent table ztrap_cons_req
+draft table ztrap_cons_req_d
+lock master total etag LastChangedAt
+authorization master ( global )
+etag master LocalLastChangedAt
+{
+  create;
+  update;
+  delete;
+  association _Items { create; }
+
+
+  draft action Edit;
+  draft action Activate optimized;
+  draft action Discard;
+  draft action Resume;
+  draft determine action Prepare;
+
+  determination setDefaultValues on modify { create; }
+  validation checkQuantity on save { create; update; field Quantity; }
+  action ( features : instance ) submit result [0..1] $self;
+  side effects { action submit affects $self; }
+
+
+  field ( readonly, numbering : managed ) RequestID;
+
+  field ( features : instance )
+    Requester,
+    ItemText,
+    Quantity,
+    UnitCode,
+    CostCenter;
+
+  field ( readonly )
+    RequestDate,
+    Status,
+    CreatedBy,
+    CreatedAt,
+    LastChangedBy,
+    LastChangedAt,
+    LocalLastChangedAt;
+
+  field ( mandatory )
+    Requester,
+    ItemText,
+    Quantity,
+    UnitCode,
+    CostCenter;
+
+  mapping for ztrap_cons_req
+  {
+    RequestID            = request_id;
+    RequestDate          = request_date;
+    Requester            = requester;
+    ItemText             = item_text;
+    Quantity             = quantity;
+    UnitCode             = unit;
+    CostCenter           = cost_center;
+    Status               = status;
+    CreatedBy            = created_by;
+    CreatedAt            = created_at;
+    LastChangedBy        = last_changed_by;
+    LastChangedAt        = last_changed_at;
+    LocalLastChangedAt   = local_last_changed_at;
+  }
+}
+
+//本次追加代码
+define behavior for ZI_RAP_CONS_ITEM alias ConsItem
+persistent table ztrap_cons_item
+draft table ztrap_cons_ite_d
+lock dependent by _Request
+authorization dependent by _Request
+etag master LocalLastChangedAt
+{
+  update;
+  delete;
+
+  field ( readonly, numbering : managed ) ItemUUID;
+
+  field ( readonly )
+    RequestID,
+    CreatedBy,
+    CreatedAt,
+    LastChangedBy,
+    LastChangedAt,
+    LocalLastChangedAt;
+
+  field ( mandatory )
+    ItemNo,
+    ItemText,
+    UnitCode,
+    Quantity;
+
+  association _Request { with draft; }
+
+  mapping for ztrap_cons_item
+  {
+    ItemUUID           = item_uuid;
+    RequestID          = request_id;
+    ItemNo             = item_no;
+    ItemText           = item_text;
+    UnitCode           = unit_code;
+    Quantity           = quantity;
+    CreatedBy          = created_by;
+    CreatedAt          = created_at;
+    LastChangedBy      = last_changed_by;
+    LastChangedAt      = last_changed_at;
+    LocalLastChangedAt = local_last_changed_at;
+  }
+}
+
+```
+
+## 第 4 步：创建 ZC_RAP_CONS_ITEM
+<img width="837" height="762" alt="image" src="https://github.com/user-attachments/assets/9d9268b0-913f-458f-a375-25e96129bb32" />
+
+```cds
+@AbapCatalog.viewEnhancementCategory: [#NONE]
+@AccessControl.authorizationCheck: #NOT_REQUIRED
+@EndUserText.label: 'RAP Consumable Request Item Projection View'
+@Metadata.ignorePropagatedAnnotations: true
+define view entity ZC_RAP_CONS_ITEM
+  as projection on ZI_RAP_CONS_ITEM
+{
+  key ItemUUID,
+
+      RequestID,
+      ItemNo,
+      ItemText,
+      UnitCode,
+      Quantity,
+
+      CreatedBy,
+      CreatedAt,
+      LastChangedBy,
+      LastChangedAt,
+      LocalLastChangedAt,
+
+      _Request : redirected to parent ZC_RAP_CONS_REQ
+}
+
+```
 
 </details>
