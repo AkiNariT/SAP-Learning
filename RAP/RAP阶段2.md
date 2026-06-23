@@ -1375,5 +1375,8 @@ define service ZSD_RAP_CONS_REQ {
 }
 ```
 
+成功输出结果
+<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/d455abf6-c844-4b37-bc83-a0cae62e0418" />
+
 
 </details>
