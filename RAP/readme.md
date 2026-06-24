@@ -3,10 +3,7 @@
 
 连接官方BTP练习环境。<br>
 <img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/e2e07609-5afa-4a15-a7ce-b8d299ddc9e8" />
-
 <img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/39767bcd-e67b-4c7c-9a16-bd1dd2e3a3f1" />
-
-
 <img width="640" height="617" alt="image" src="https://github.com/user-attachments/assets/dd0343ff-0f27-4fa8-83c0-0cfd9557b9ee" />
 
 输入下载的default_key<br>
@@ -27,6 +24,45 @@ Eclipse 会打开浏览器登录页面。<br>
 ## RAP阶段 2
 优先从创建开发包开始学习。<br>
 [然后再进行RAP阶段2。](./RAP阶段2.md)
+
+### RAP阶段 2 总结
+```text
+1.对内：业务对象本体
+ZTRAP_CONS_REQ        Header 正式表
+ZTRAP_CONS_ITEM       Item 正式表
+ZTRAP_CONS_REQ_D      Header 草稿表
+ZTRAP_CONS_ITE_D      Item 草稿表
+
+ZI_RAP_CONS_REQ       Header 内部模型
+ └─ _Items  = Header  拥有多个 Item
+ZI_RAP_CONS_ITEM      Item 内部模型
+ └─ _Request = Item   回到 Header
+
+2.对外：给 Fiori / OData 使用
+ZC_RAP_CONS_REQ       Header 对外模型
+   关键代码   as projection on ZI_RAP_CONS_REQ  
+   基于内部模型，做一个对外版本。
+ZC_RAP_CONS_ITEM      Item 对外模型
+   关键代码   _Items : redirected to composition child ZC_RAP_CONS_ITEM
+   对外 Header 连接对外 Item。
+
+3.Behavior：控制能做什么
+负责“这个业务对象允许哪些操作”。
+
+4.ZUI：控制画面显示
+负责“Fiori 页面长什么样”。
+ZUI_RAP_CONS_REQ       Header 画面注解
+ZUI_RAP_CONS_ITEM      Item 画面注解
+
+@UI.lineItem          表格列
+@UI.identification    明细页 / 创建页字段
+@UI.facet             页面区块
+
+5.Service：发布成 OData
+ZSD_RAP_CONS_REQ      定义暴露哪些对象
+ZSB_RAP_CONS_REQ      发布成 OData V4
+```
+
 
 ## RAP阶段 3
 [学完RAP阶段2，在进行3](./RAP阶段3.md)
