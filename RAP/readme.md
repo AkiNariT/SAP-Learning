@@ -26,8 +26,9 @@ Eclipse 会打开浏览器登录页面。<br>
 [然后再进行RAP阶段2。](./RAP阶段2.md)
 
 ### RAP阶段 2 总结
-```text
+
 1.对内：业务对象本体
+```text
 ZTRAP_CONS_REQ        Header 正式表
 ZTRAP_CONS_ITEM       Item 正式表
 ZTRAP_CONS_REQ_D      Header 草稿表
@@ -37,19 +38,24 @@ ZI_RAP_CONS_REQ       Header 内部模型
  └─ _Items  = Header  拥有多个 Item
 ZI_RAP_CONS_ITEM      Item 内部模型
  └─ _Request = Item   回到 Header
+```
+
 
 2.对外：给 Fiori / OData 使用
+```text
 ZC_RAP_CONS_REQ       Header 对外模型
    关键代码   as projection on ZI_RAP_CONS_REQ  
    基于内部模型，做一个对外版本。
 ZC_RAP_CONS_ITEM      Item 对外模型
    关键代码   _Items : redirected to composition child ZC_RAP_CONS_ITEM
    对外 Header 连接对外 Item。
+```
 
 3.Behavior：控制能做什么
 负责“这个业务对象允许哪些操作”。
 
 4.ZUI：控制画面显示
+```text
 负责“Fiori 页面长什么样”。
 ZUI_RAP_CONS_REQ       Header 画面注解
 ZUI_RAP_CONS_ITEM      Item 画面注解
@@ -57,8 +63,10 @@ ZUI_RAP_CONS_ITEM      Item 画面注解
 @UI.lineItem          表格列
 @UI.identification    明细页 / 创建页字段
 @UI.facet             页面区块
+```
 
 5.Service：发布成 OData
+```text
 ZSD_RAP_CONS_REQ      定义暴露哪些对象
 ZSB_RAP_CONS_REQ      发布成 OData V4
 ```
