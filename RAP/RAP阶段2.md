@@ -1405,22 +1405,37 @@ annotate entity ZC_RAP_CONS_REQ with
 <img width="837" height="762" alt="image" src="https://github.com/user-attachments/assets/d7785954-eb2b-4fee-925c-9c3fc479edd7" />
 
 ```cds
-@Metadata.layer: layer
+@Metadata.layer: #CORE
 annotate entity ZC_RAP_CONS_ITEM
   with 
 {
+  @UI.facet: [
+    {
+      id: 'ItemGeneral',
+      purpose: #STANDARD,
+      type: #IDENTIFICATION_REFERENCE,
+      label: 'Item Information',
+      position: 10
+    }
+  ]
+  
   @UI.lineItem: [{ position: 10, label: 'Item No' }]
+  @UI.identification: [{ position: 10, label: 'Item No' }]
   ItemNo;
 
   @UI.lineItem: [{ position: 20, label: 'Item Text' }]
+  @UI.identification: [{ position: 20, label: 'Item Text' }]
   ItemText;
 
   @UI.lineItem: [{ position: 30, label: 'Quantity' }]
+  @UI.identification: [{ position: 30, label: 'Quantity' }]
   Quantity;
 
   @UI.lineItem: [{ position: 40, label: 'Unit' }]
+  @UI.identification: [{ position: 40, label: 'Unit' }]
   UnitCode;
-}
+  
+  }
 ```
 
 
@@ -1431,8 +1446,95 @@ annotate entity ZC_RAP_CONS_ITEM
 ## 为了测试，需要追加数据
 
 <img width="837" height="762" alt="image" src="https://github.com/user-attachments/assets/3c8d02c7-907f-4fec-8f47-18e396975994" />
+```cds
+CLASS zcl_rap_fill_item_data DEFINITION
+  PUBLIC
+  FINAL
+  CREATE PUBLIC .
+
+  PUBLIC SECTION.
+    INTERFACES if_oo_adt_classrun.
+
+ENDCLASS.
 
 
 
+CLASS zcl_rap_fill_item_data IMPLEMENTATION.
+  METHOD if_oo_adt_classrun~main.
+    DATA lv_request_id TYPE sysuuid_x16.
+    DATA lv_item_uuid1 TYPE sysuuid_x16.
+    DATA lv_item_uuid2 TYPE sysuuid_x16.
+    DATA lv_timestamp  TYPE timestampl.
+
+    lv_request_id = cl_system_uuid=>create_uuid_x16_static( ).
+    lv_item_uuid1 = cl_system_uuid=>create_uuid_x16_static( ).
+    lv_item_uuid2 = cl_system_uuid=>create_uuid_x16_static( ).
+
+    "Create Header
+    INSERT ztrap_cons_req FROM @( VALUE #(
+      client                = sy-mandt
+      request_id            = lv_request_id
+      request_date          = cl_abap_context_info=>get_system_date( )
+      requester             = 'TEST_USER'
+      item_text             = 'Header test data'
+      quantity              = '1'
+      unit                  = 'EA'
+      cost_center           = '1000'
+      status                = 'NEW'
+      created_by            = sy-uname
+      created_at            = lv_timestamp
+      last_changed_by       = sy-uname
+      last_changed_at       = lv_timestamp
+      local_last_changed_at = lv_timestamp
+    ) ).
+
+    "Create Item 1
+    INSERT ztrap_cons_item FROM @( VALUE #(
+      client                = sy-mandt
+      item_uuid             = lv_item_uuid1
+      request_id            = lv_request_id
+      item_no               = '000010'
+      item_text             = 'Mouse'
+      unit_code             = 'EA'
+      quantity              = '1'
+      created_by            = sy-uname
+      created_at            = lv_timestamp
+      last_changed_by       = sy-uname
+      last_changed_at       = lv_timestamp
+      local_last_changed_at = lv_timestamp
+    ) ).
+
+    "Create Item 2
+    INSERT ztrap_cons_item FROM @( VALUE #(
+      client                = sy-mandt
+      item_uuid             = lv_item_uuid2
+      request_id            = lv_request_id
+      item_no               = '000020'
+      item_text             = 'Keyboard'
+      unit_code             = 'EA'
+      quantity              = '2'
+      created_by            = sy-uname
+      created_at            = lv_timestamp
+      last_changed_by       = sy-uname
+      last_changed_at       = lv_timestamp
+      local_last_changed_at = lv_timestamp
+    ) ).
+
+    COMMIT WORK.
+
+    out->write( 'Header and item test data created.' ).
+    out->write( lv_request_id ).
+  ENDMETHOD.
+
+ENDCLASS.
+```
+运行测试，成功。
+<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/1f5e7229-ccb7-4afe-9623-601553df8aa0" />
+
+
+再有一种测试方式。
+<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/7f7006a6-6aad-4620-918e-3f987d6cf688" />
+<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/c42605f4-325a-4901-89b1-4db8cf0118f0" />
+产看json文件。验证_Item的数据。
 
 </details>
