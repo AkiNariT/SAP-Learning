@@ -1284,6 +1284,7 @@ etag master LocalLastChangedAt
 @AccessControl.authorizationCheck: #NOT_REQUIRED
 @EndUserText.label: 'RAP Consumable Request Item Projection View'
 @Metadata.ignorePropagatedAnnotations: true
+@Metadata.allowExtensions: true
 define view entity ZC_RAP_CONS_ITEM
   as projection on ZI_RAP_CONS_ITEM
 {
@@ -1397,9 +1398,31 @@ annotate entity ZC_RAP_CONS_REQ with
     targetElement: '_Items'
     }  
   ]
-
-
 ```
+
+新建Metadata Extension：ZUI_RAP_CONS_ITEM
+<img width="837" height="762" alt="image" src="https://github.com/user-attachments/assets/1b1f90e0-afeb-490f-bcdd-610a58bdd9bc" />
+<img width="837" height="762" alt="image" src="https://github.com/user-attachments/assets/d7785954-eb2b-4fee-925c-9c3fc479edd7" />
+
+```cds
+@Metadata.layer: layer
+annotate entity ZC_RAP_CONS_ITEM
+  with 
+{
+  @UI.lineItem: [{ position: 10, label: 'Item No' }]
+  ItemNo;
+
+  @UI.lineItem: [{ position: 20, label: 'Item Text' }]
+  ItemText;
+
+  @UI.lineItem: [{ position: 30, label: 'Quantity' }]
+  Quantity;
+
+  @UI.lineItem: [{ position: 40, label: 'Unit' }]
+  UnitCode;
+}
+```
+
 
 
 成功输出结果
