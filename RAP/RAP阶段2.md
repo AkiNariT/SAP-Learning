@@ -1375,8 +1375,41 @@ define service ZSD_RAP_CONS_REQ {
 }
 ```
 
+为了再fiori画面显示数据，本次修改：ZUI_RAP_CONS_REQ<br>
+```cds
+annotate entity ZC_RAP_CONS_REQ with
+{
+  @UI.facet: [
+    {
+      id: 'General',
+      purpose: #STANDARD,
+      type: #IDENTIFICATION_REFERENCE,
+      label: 'General Information',
+      position: 10
+    },
+//本次追加代码
+    {
+    id: 'Items',
+    purpose: #STANDARD,
+    type: #LINEITEM_REFERENCE,
+    label: 'Items',
+    position: 20,
+    targetElement: '_Items'
+    }  
+  ]
+
+
+```
+
+
 成功输出结果
 <img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/d455abf6-c844-4b37-bc83-a0cae62e0418" />
+
+## 为了测试，需要追加数据
+
+<img width="837" height="762" alt="image" src="https://github.com/user-attachments/assets/3c8d02c7-907f-4fec-8f47-18e396975994" />
+
+
 
 
 </details>
