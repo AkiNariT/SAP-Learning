@@ -133,8 +133,122 @@ etag master LocalLastChangedAt
 
 ```
 
+修改 Behavior Implementation Class：ZBP_I_RAP_CONS_REQ
+```abap
+......
+METHODS checkItemQuantity
+  FOR VALIDATE ON SAVE
+IMPORTING keys FOR ConsItem~checkItemQuantity.
+......
+METHOD setItemNo.
+
+  TYPES:
+    BEGIN OF ty_max_item,
+      requestid TYPE sysuuid_x16,
+      max_no    TYPE i,
+    END OF ty_max_item.
+
+  DATA max_items TYPE HASHED TABLE OF ty_max_item
+    WITH UNIQUE KEY requestid.
+
+  DATA updates TYPE TABLE FOR UPDATE zi_rap_cons_req\\ConsItem.
+
+  "读取本次新建/修改触发 determination 的 Item
+  READ ENTITIES OF zi_rap_cons_req IN LOCAL MODE
+    ENTITY ConsItem
+      FIELDS ( RequestID ItemNo )
+      WITH CORRESPONDING #( keys )
+    RESULT DATA(items).
+
+  IF items IS INITIAL.
+    RETURN.
+  ENDIF.
+
+  "通过 Item 找到对应 Header
+  READ ENTITIES OF zi_rap_cons_req IN LOCAL MODE
+    ENTITY ConsItem BY \_Request
+      FIELDS ( RequestID )
+      WITH CORRESPONDING #( keys )
+    RESULT DATA(requests).
+
+  IF requests IS INITIAL.
+    RETURN.
+  ENDIF.
+
+  "读取这些 Header 下的全部 Items
+  READ ENTITIES OF zi_rap_cons_req IN LOCAL MODE
+    ENTITY ConsReq BY \_Items
+      FIELDS ( RequestID ItemNo )
+      WITH CORRESPONDING #( requests )
+    RESULT DATA(all_items).
+
+  "先计算每个 Header 下现有最大 ItemNo
+  LOOP AT all_items ASSIGNING FIELD-SYMBOL(<existing_item>)
+    WHERE ItemNo IS NOT INITIAL.
+
+    DATA(current_no) = CONV i( <existing_item>-ItemNo ).
+
+    READ TABLE max_items ASSIGNING FIELD-SYMBOL(<max_item>)
+      WITH TABLE KEY requestid = <existing_item>-RequestID.
+
+    IF sy-subrc <> 0.
+      INSERT VALUE #(
+        requestid = <existing_item>-RequestID
+        max_no    = current_no
+      ) INTO TABLE max_items.
+    ELSEIF current_no > <max_item>-max_no.
+      <max_item>-max_no = current_no.
+    ENDIF.
+
+  ENDLOOP.
+
+  "给本次新增且没有 ItemNo 的 Item 编号
+  LOOP AT items ASSIGNING FIELD-SYMBOL(<item>)
+    WHERE ItemNo IS INITIAL.
+
+    DATA(next_no) = 10.
+
+    READ TABLE max_items ASSIGNING <max_item>
+      WITH TABLE KEY requestid = <item>-RequestID.
+
+    IF sy-subrc = 0.
+      next_no = <max_item>-max_no + 10.
+      <max_item>-max_no = next_no.
+    ELSE.
+      INSERT VALUE #(
+        requestid = <item>-RequestID
+        max_no    = next_no
+      ) INTO TABLE max_items.
+    ENDIF.
+
+    DATA item_no TYPE ztrap_cons_item-item_no.
+    item_no = |{ next_no WIDTH = 6 ALIGN = RIGHT PAD = '0' }|.
+
+    APPEND VALUE #(
+      %tky   = <item>-%tky
+      ItemNo = item_no
+    ) TO updates.
+
+  ENDLOOP.
+
+  IF updates IS NOT INITIAL.
+
+    MODIFY ENTITIES OF zi_rap_cons_req IN LOCAL MODE
+      ENTITY ConsItem
+        UPDATE FIELDS ( ItemNo )
+        WITH updates.
+
+  ENDIF.
+
+ENDMETHOD.
+
+```
+自动带出成功
+<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/3bb93798-f5f0-4cbb-be00-305036dcfc51" />
+
+
 </details>
 
-修改 Behavior Implementation Class：ZBP_I_RAP_CONS_REQ
+
 
 
