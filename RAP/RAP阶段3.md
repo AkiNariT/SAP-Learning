@@ -31,7 +31,7 @@ Item 的 Quantity 必须大于 0<br>
 ```
 
 修改 Behavior Implementation Class：ZBP_I_RAP_CONS_REQ
-```js
+```abap
 ......
 
 CLASS lhc_ConsItem DEFINITION INHERITING FROM cl_abap_behavior_handler.
