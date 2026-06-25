@@ -362,7 +362,7 @@ METHOD submit.
       )
     ).
 
-ENDIF.
+ ENDIF.
   "IF has_valid_request = abap_true.
 
    "MODIFY ENTITIES OF zi_rap_cons_req IN LOCAL MODE
