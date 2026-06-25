@@ -32,7 +32,6 @@ Item 的 Quantity 必须大于 0<br>
 
 修改 Behavior Implementation Class：ZBP_I_RAP_CONS_REQ
 ```js
-
 ......
 
 CLASS lhc_ConsItem DEFINITION INHERITING FROM cl_abap_behavior_handler.
@@ -117,16 +116,25 @@ etag master LocalLastChangedAt
     LocalLastChangedAt;
 
   field ( mandatory )
+    //本次更改代码
     //ItemNo,
     ItemText,
     UnitCode,
     Quantity;
 
+  //本次追加代码，他影响着后面method：setItemNo的实装
+  determination setItemNo on modify { create; }
+  
+  validation checkItemQuantity on save { create; update; field Quantity; }
+
+  association _Request { with draft; }
+
   ......
 
 ```
 
+</details>
 
-
+修改 Behavior Implementation Class：ZBP_I_RAP_CONS_REQ
 
 
