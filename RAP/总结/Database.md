@@ -56,3 +56,32 @@
 <br>
 <br>
 
+`@AbapCatalog.dataMaintenance :`<br>
+它控制这张表的数据是否允许通过 Data Preview、SE16、SM30/SM31 等方式显示或维护。<br>
+| 值                       | 大概含义                  |
+| ----------------------- | --------------------- |
+| `#RESTRICTED`           | 限制维护，RAP 业务表常用        |
+| `#ALLOWED`              | 允许显示/维护表内容            |
+| `#NOT_ALLOWED`          | 不允许显示/维护              |
+| `#DISPLAY` / `#LIMITED` | 通常偏向只显示、不直接维护，具体看系统版本 |
+
+
+## 其他注解
+`@AbapCatalog.enhancement.fieldSuffix :`<br>
+它用于限制扩展字段名的后缀。<br>
+通常和`@AbapCatalog.enhancement.category :`联用。<br>
+```abap
+@AbapCatalog.enhancement.category    : #EXTENSIBLE_CHARACTER_NUMERIC
+@AbapCatalog.enhancement.fieldSuffix : 'ZZ1'
+```
+
+<br>
+<br>
+
+`@AbapCatalog.replacementObject :`<br>
+这个比较特殊。<br>
+它表示对某张表的读取可以被替换到某个 CDS entity 上。普通 RAP 自建表不要用。<br>
+这是特殊兼容/替换场景，不是 RAP 初学重点。<br>
+
+
+## 字段级别常见注解
