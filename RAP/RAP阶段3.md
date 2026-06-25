@@ -246,9 +246,169 @@ ENDMETHOD.
 自动带出成功
 <img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/3bb93798-f5f0-4cbb-be00-305036dcfc51" />
 
-
 </details>
 
 
+<details>
+  
+ <summary><h2>3.Submit 前整单校验。</h2></summary>
+设计目标：<Br>
+```text
+Header 有 Items → 可以 Submit
+Header 没有 Items → 报错
+```
+
+### 修改 ZBP_I_RAP_CONS_REQ 的 submit 方法
+```abap
+METHOD submit.
+
+  "DATA has_valid_request TYPE abap_bool VALUE abap_false.
+
+  READ ENTITIES OF zi_rap_cons_req IN LOCAL MODE
+    ENTITY ConsReq
+      FIELDS ( Status )
+      WITH CORRESPONDING #( keys )
+    RESULT DATA(requests).
+
+  "追加代码
+  READ ENTITIES OF zi_rap_cons_req IN LOCAL MODE
+    ENTITY ConsReq BY \_Items
+      FIELDS ( ItemUUID RequestID ItemNo )
+      WITH CORRESPONDING #( keys )
+    RESULT DATA(items).
+  "追加代码
+  DATA requests_to_submit LIKE requests.
+
+  "本次loop修改
+  LOOP AT requests ASSIGNING FIELD-SYMBOL(<request>).
+    "1. 状态检查：只有 NEW 可以 Submit
+    IF <request>-Status <> 'NEW'.
+
+      APPEND VALUE #( %tky = <request>-%tky )
+        TO failed-consreq.
+
+      APPEND VALUE #(
+        %tky = <request>-%tky
+        %msg = new_message_with_text(
+                 severity = if_abap_behv_message=>severity-error
+                 text     = 'Only requests with status NEW can be submitted' )
+        %element-Status = if_abap_behv=>mk-on
+      ) TO reported-consreq.
+
+    "ELSE.
+      "has_valid_request = abap_true.
+
+    ENDIF.
+
+    "2. 明细检查：没有 Item 不允许 Submit
+    IF NOT line_exists( items[ RequestID = <request>-RequestID ] ).
+
+      APPEND VALUE #( %tky = <request>-%tky )
+        TO failed-consreq.
+
+      APPEND VALUE #(
+        %tky = <request>-%tky
+        %msg = new_message_with_text(
+                 severity = if_abap_behv_message=>severity-error
+                 text     = 'At least one item is required before submit' )
+      ) TO reported-consreq.
+
+      CONTINUE.
+
+    ENDIF.
 
 
+    "3. 只有通过检查的 Header 才放进提交对象
+    APPEND <request> TO requests_to_submit.
+
+  ENDLOOP.
+
+ IF requests_to_submit IS NOT INITIAL.
+
+    MODIFY ENTITIES OF zi_rap_cons_req IN LOCAL MODE
+      ENTITY ConsReq
+        UPDATE FIELDS ( Status )
+        WITH VALUE #(
+          FOR request IN requests_to_submit
+          (
+            %tky   = request-%tky
+            Status = 'SUBMITTED'
+          )
+        )
+      FAILED DATA(modify_failed)
+      REPORTED DATA(modify_reported).
+
+    APPEND LINES OF modify_failed-consreq TO failed-consreq.
+    APPEND LINES OF modify_reported-consreq TO reported-consreq.
+
+
+    READ ENTITIES OF zi_rap_cons_req IN LOCAL MODE
+      ENTITY ConsReq
+        ALL FIELDS
+        WITH VALUE #(
+          FOR request IN requests_to_submit
+          (
+            %tky = request-%tky
+          )
+        )
+      RESULT DATA(updated_requests).
+
+    result = VALUE #(
+      FOR updated_request IN updated_requests
+      (
+        %tky   = updated_request-%tky
+        %param = updated_request
+      )
+    ).
+
+ENDIF.
+  "IF has_valid_request = abap_true.
+
+   "MODIFY ENTITIES OF zi_rap_cons_req IN LOCAL MODE
+      "ENTITY ConsReq
+        "UPDATE FIELDS ( Status )
+        "WITH VALUE #(
+          "FOR request IN requests
+          "WHERE ( Status = 'NEW' )
+          "(
+            "%tky   = request-%tky
+            "Status = 'SUBMITTED'
+          ")
+        ")
+      "FAILED DATA(modify_failed)
+      "REPORTED DATA(modify_reported).
+
+    "APPEND LINES OF modify_failed-consreq TO failed-consreq.
+    "APPEND LINES OF modify_reported-consreq TO reported-consreq.
+
+    "READ ENTITIES OF zi_rap_cons_req IN LOCAL MODE
+      "ENTITY ConsReq
+        "ALL FIELDS
+        "WITH VALUE #(
+          "FOR request IN requests
+          "WHERE ( Status = 'NEW' )
+          "(
+            "%tky = request-%tky
+          ")
+        ")
+      "RESULT DATA(updated_requests).
+
+    "result = VALUE #(
+      "FOR updated_request IN updated_requests
+      "(
+        "%tky   = updated_request-%tky
+        "%param = updated_request
+      ")
+    ").
+
+  "ENDIF.
+
+ENDMETHOD.
+```
+
+测试结果，没有明细无法submit。
+<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/5ef8e885-f4d9-48d6-8c68-65b7fe3f9159" />
+
+
+
+</details>
