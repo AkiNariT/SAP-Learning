@@ -253,6 +253,7 @@ ENDMETHOD.
   
  <summary><h2>3.Submit 前整单校验。</h2></summary>
 设计目标：<Br>
+
 ```text
 Header 有 Items → 可以 Submit
 Header 没有 Items → 报错
