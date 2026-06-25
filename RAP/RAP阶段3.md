@@ -27,3 +27,58 @@ Item 的 Quantity 必须大于 0<br>
     RequestID          = request_id;
   ......
 ```
+
+修改 Behavior Implementation Class：ZBP_I_RAP_CONS_REQ
+```js
+
+......
+
+CLASS lhc_ConsItem DEFINITION INHERITING FROM cl_abap_behavior_handler.
+  PRIVATE SECTION.
+
+    METHODS checkItemQuantity
+      FOR VALIDATE ON SAVE
+      IMPORTING keys FOR ConsItem~checkItemQuantity.
+
+ENDCLASS.
+
+......
+CLASS  lhc_ConsItem IMPLEMENTATION.
+
+  METHOD checkItemQuantity.
+
+    READ ENTITIES OF zi_rap_cons_req IN LOCAL MODE
+      ENTITY ConsItem
+        FIELDS ( Quantity )
+        WITH CORRESPONDING #( keys )
+      RESULT DATA(items).
+
+    LOOP AT items ASSIGNING FIELD-SYMBOL(<item>).
+
+      IF <item>-Quantity IS INITIAL OR <item>-Quantity <= 0.
+
+        APPEND VALUE #( %tky = <item>-%tky )
+          TO failed-consitem.
+
+        APPEND VALUE #(
+          %tky = <item>-%tky
+          %msg = new_message_with_text(
+                   severity = if_abap_behv_message=>severity-error
+                   text     = 'Item quantity must be greater than 0' )
+          %element-Quantity = if_abap_behv=>mk-on
+        ) TO reported-consitem.
+
+      ENDIF.
+
+    ENDLOOP.
+
+  ENDMETHOD.
+
+ENDCLASS.
+
+```
+
+
+
+### 测试结果
+<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/56efc449-f51e-46bf-8e20-ecdfef45faab" />
