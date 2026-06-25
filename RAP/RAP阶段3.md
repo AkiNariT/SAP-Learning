@@ -1,4 +1,6 @@
-## Item Quantity 校验
+<details>
+  
+ <summary><h2>1.Item Quantity 校验</h2></summary>
 
 RAP第二阶段做完，我们已经成功添加明细。<br>
 下一步开始做明细的check。<br>
@@ -78,7 +80,53 @@ ENDCLASS.
 
 ```
 
-
-
 ### 测试结果
 <img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/56efc449-f51e-46bf-8e20-ecdfef45faab" />
+
+</details>
+
+<details>
+  
+ <summary><h2>2.Item 自动编号</h2></summary>
+
+设计：自动编号<br>
+先修改Interface Behavior：ZI_RAP_CONS_REQ
+
+```cds
+define behavior for ZI_RAP_CONS_ITEM alias ConsItem
+persistent table ztrap_cons_item
+draft table ztrap_cons_ite_d
+lock dependent by _Request
+authorization dependent by _Request
+etag master LocalLastChangedAt
+{
+  update;
+  delete;
+
+  field ( readonly, numbering : managed ) ItemUUID;
+
+  field ( readonly )
+    RequestID,
+    //本次追加
+    ItemNo,
+    //
+    CreatedBy,
+    CreatedAt,
+    LastChangedBy,
+    LastChangedAt,
+    LocalLastChangedAt;
+
+  field ( mandatory )
+    //ItemNo,
+    ItemText,
+    UnitCode,
+    Quantity;
+
+  ......
+
+```
+
+
+
+
+
