@@ -81,3 +81,28 @@
 
 
 ## 字段级别常见注解
+### 金额和货币
+```abap
+@Semantics.amount.currencyCode : 'zrap_cons_req_i.currency_code'
+amount        : abap.curr(15,2);
+currency_code : abap.cuky;
+```
+意思是：amount 这个金额字段，对应的货币字段是 currency_code。
+
+### 数量和单位
+```abap
+@Semantics.quantity.unitOfMeasure : 'zrap_cons_req_i.unit'
+quantity : abap.quan(13,3);
+unit     : meins;
+```
+意思是：quantity 这个数量字段，对应的单位字段是 unit。
+
+### 外键相关注解
+```abap
+@AbapCatalog.foreignKey.label
+@AbapCatalog.foreignKey.keyType
+@AbapCatalog.foreignKey.screenCheck
+@AbapCatalog.foreignKey.messageClass
+@AbapCatalog.foreignKey.messageNumber
+```
+初学 RAP 时不用先深入。RAP 的业务关联主要先通过 CDS association / composition 来表达。
