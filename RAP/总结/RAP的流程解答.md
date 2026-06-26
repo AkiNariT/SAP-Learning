@@ -8,6 +8,8 @@
 
 ## Data Definitions(cds view)
 包装成业务模型 / 查询模型<br>
+在 RAP 里主要是用来写 CDS View Entity 的<br>
+
 
 ## MetaData Extensions
 
