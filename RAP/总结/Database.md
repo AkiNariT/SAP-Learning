@@ -13,7 +13,6 @@
 ```
 
 <br>
-<br>
 
 `@EndUserText.label :`<br>
 表对象的短文本说明。<br>
@@ -29,7 +28,6 @@
 | `#NOT_CLASSIFIED`               | 未分类，老对象里可能看到，新开发不建议用     |
 
 <br>
-<br>
 
 `@AbapCatalog.tableCategoryc :`<br>
 它控制表的表类别。<br>
@@ -38,7 +36,6 @@
 | `#TRANSPARENT`      | 透明表，正常持久化表   | 常用          |
 | `#GLOBAL_TEMPORARY` | 全局临时表，保存临时数据 | RAP 业务表一般不用 |
 
-<br>
 <br>
 
 `@AbapCatalog.deliveryClass :`<br>
@@ -75,7 +72,6 @@
 @AbapCatalog.enhancement.fieldSuffix : 'ZZ1'
 ```
 
-<br>
 <br>
 
 `@AbapCatalog.replacementObject :`<br>
